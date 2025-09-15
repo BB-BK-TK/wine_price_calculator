@@ -1,313 +1,93 @@
+wine-price-calculator/
+├── app/
+│   ├── globals.css
+│   ├── layout.js
+│   └── page.js
+├── components/
+│   └── WinePriceCalculator.js
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+└── next.config.js
+{
+  "name": "wine-price-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "lucide-react": "^0.454.0",
+    "next": "14.2.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.3"
+  }
+}
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true
+};
+export default nextConfig;
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./app/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}"
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: sans-serif;
+}
+export const metadata = {
+  title: "Wine Price Calculator",
+  description: "Estimate reasonable wine prices using climate data",
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className="bg-gradient-to-br from-purple-900 via-red-900 to-amber-900">
+        {children}
+      </body>
+    </html>
+  );
+}
+import WinePriceCalculator from "@/components/WinePriceCalculator";
+
+export default function Home() {
+  return (
+    <main>
+      <WinePriceCalculator />
+    </main>
+  );
+}
+"use client";
+
 import React, { useState } from 'react';
 import { Calculator, Wine, MapPin, Calendar, Grape } from 'lucide-react';
 
-// Grape type constants
-const GRAPE_TYPES = {
-  PINOT_NOIR: 'pinot noir',
-  CABERNET_SAUVIGNON: 'cabernet sauvignon',
-  SYRAH: 'syrah',
-  MALBEC: 'malbec',
-  CHARDONNAY: 'chardonnay',
-  RIESLING: 'riesling'
-};
-
-const WinePriceCalculator = () => {
-  const [vintage, setVintage] = useState('');
-  const [location, setLocation] = useState('');
-  const [grapeType, setGrapeType] = useState('');
-  const [calculatedPrice, setCalculatedPrice] = useState(null);
-  const [weatherData, setWeatherData] = useState(null);
-  const [isCalculating, setIsCalculating] = useState(false);
-
-  // Grape type multipliers
-  const grapeMultipliers = {
-    [GRAPE_TYPES.PINOT_NOIR]: { multiplier: 1.15, notes: 'High sensitivity & value' },
-    [GRAPE_TYPES.CABERNET_SAUVIGNON]: { multiplier: 1.10, notes: 'Robust red, highly valued' },
-    [GRAPE_TYPES.MALBEC]: { multiplier: 1.00, notes: 'Baseline for Mendoza' },
-    [GRAPE_TYPES.CHARDONNAY]: { multiplier: 0.95, notes: 'Market-saturated white' },
-    [GRAPE_TYPES.RIESLING]: { multiplier: 0.93, notes: 'Niche but quality-driven' },
-    [GRAPE_TYPES.SYRAH]: { multiplier: 1.05, notes: 'Popular warm-climate red' }
-  };
-
-  // Regional weather patterns (simplified estimates)
-  const regionalPatterns = {
-    'napa valley': { winterRainfall: 600, avgGrowingTemp: 20.5, harvestRainfall: 25 },
-    'bordeaux': { winterRainfall: 800, avgGrowingTemp: 18.2, harvestRainfall: 85 },
-    'burgundy': { winterRainfall: 650, avgGrowingTemp: 17.8, harvestRainfall: 75 },
-    'tuscany': { winterRainfall: 700, avgGrowingTemp: 21.3, harvestRainfall: 45 },
-    'rioja': { winterRainfall: 450, avgGrowingTemp: 19.1, harvestRainfall: 55 },
-    'barossa valley': { winterRainfall: 350, avgGrowingTemp: 22.1, harvestRainfall: 15 },
-    'mendoza': { winterRainfall: 200, avgGrowingTemp: 19.5, harvestRainfall: 35 },
-    'willamette valley': { winterRainfall: 1200, avgGrowingTemp: 17.5, harvestRainfall: 150 },
-    'champagne': { winterRainfall: 600, avgGrowingTemp: 16.2, harvestRainfall: 65 },
-    'chianti': { winterRainfall: 750, avgGrowingTemp: 20.8, harvestRainfall: 50 },
-    'douro': { winterRainfall: 1100, avgGrowingTemp: 22.5, harvestRainfall: 25 },
-    'mosel': { winterRainfall: 700, avgGrowingTemp: 15.8, harvestRainfall: 80 }
-  };
-
-  const getWeatherVariation = (baseValue, vintage) => {
-    // Add some vintage-year variation (simplified)
-    const currentYear = new Date().getFullYear();
-    const yearDiff = currentYear - parseInt(vintage);
-    const randomFactor = (Math.sin(parseInt(vintage) * 0.1) * 0.15) + 1;
-    return baseValue * randomFactor * (1 + (yearDiff * 0.002));
-  };
-
-  const calculatePrice = () => {
-    if (!vintage || !location || !grapeType) {
-      alert('Please enter vintage year, winery location, and grape type');
-      return;
-    }
-
-    setIsCalculating(true);
-    
-    // Find matching region
-    const locationKey = location.toLowerCase().trim();
-    let baseWeather = null;
-    
-    for (const region in regionalPatterns) {
-      if (locationKey.includes(region) || region.includes(locationKey)) {
-        baseWeather = regionalPatterns[region];
-        break;
-      }
-    }
-
-    // Default values if location not found
-    if (!baseWeather) {
-      baseWeather = { winterRainfall: 600, avgGrowingTemp: 19.0, harvestRainfall: 60 };
-    }
-
-    // Apply vintage variations
-    const winterRainfall = getWeatherVariation(baseWeather.winterRainfall, vintage);
-    const avgGrowingTemp = getWeatherVariation(baseWeather.avgGrowingTemp, vintage);
-    const harvestRainfall = getWeatherVariation(baseWeather.harvestRainfall, vintage);
-
-    // Get grape type multiplier
-    const grapeKey = grapeType.toLowerCase().trim();
-    let grapeMultiplier = 1.00; // Default multiplier
-    let grapeNotes = 'Standard variety';
-    
-    for (const grape in grapeMultipliers) {
-      if (grapeKey.includes(grape) || grape.includes(grapeKey)) {
-        grapeMultiplier = grapeMultipliers[grape].multiplier;
-        grapeNotes = grapeMultipliers[grape].notes;
-        break;
-      }
-    }
-
-    // Apply the formula: 12.145 + 0.00117(Winter rainfall) + 0.0614(Average growing season temperature) – 0.00386(Harvest rainfall)
-    const basePrice = 12.145 + 
-                      (0.00117 * winterRainfall) + 
-                      (0.0614 * avgGrowingTemp) - 
-                      (0.00386 * harvestRainfall);
-    
-    // Apply grape type multiplier
-    const finalPrice = basePrice * grapeMultiplier;
-
-    setWeatherData({
-      winterRainfall: winterRainfall.toFixed(1),
-      avgGrowingTemp: avgGrowingTemp.toFixed(1),
-      harvestRainfall: harvestRainfall.toFixed(1),
-      grapeMultiplier: grapeMultiplier,
-      grapeNotes: grapeNotes,
-      basePrice: basePrice.toFixed(2)
-    });
-
-    setTimeout(() => {
-      setCalculatedPrice(finalPrice);
-      setIsCalculating(false);
-    }, 1000);
-  };
-
-  const reset = () => {
-    setVintage('');
-    setLocation('');
-    setGrapeType('');
-    setCalculatedPrice(null);
-    setWeatherData(null);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-red-900 to-amber-900 p-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8 mb-6">
-          <div className="text-center mb-8">
-            <Wine className="w-16 h-16 text-amber-300 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold text-white mb-2">Wine Price Calculator</h1>
-            <p className="text-white/80">Estimate reasonable wine prices using climate data</p>
-          </div>
-
-          <div className="space-y-6">
-            <div>
-              <label className="flex items-center text-white font-semibold mb-3">
-                <Calendar className="w-5 h-5 mr-2" />
-                Vintage Year
-              </label>
-              <input
-                type="number"
-                value={vintage}
-                onChange={(e) => setVintage(e.target.value)}
-                placeholder="e.g., 2018"
-                min="1900"
-                max="2025"
-                className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent backdrop-blur-sm"
-              />
-            </div>
-
-            <div>
-              <label className="flex items-center text-white font-semibold mb-3">
-                <Grape className="w-5 h-5 mr-2" />
-                Grape Type
-              </label>
-              <select
-                value={grapeType}
-                onChange={(e) => setGrapeType(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent backdrop-blur-sm"
-              >
-                <option value="" className="bg-gray-800">Select grape type...</option>
-                <option value={GRAPE_TYPES.PINOT_NOIR} className="bg-gray-800">Pinot Noir (×1.15)</option>
-                <option value={GRAPE_TYPES.CABERNET_SAUVIGNON} className="bg-gray-800">Cabernet Sauvignon (×1.10)</option>
-                <option value={GRAPE_TYPES.SYRAH} className="bg-gray-800">Syrah (×1.05)</option>
-                <option value={GRAPE_TYPES.MALBEC} className="bg-gray-800">Malbec (×1.00)</option>
-                <option value={GRAPE_TYPES.CHARDONNAY} className="bg-gray-800">Chardonnay (×0.95)</option>
-                <option value={GRAPE_TYPES.RIESLING} className="bg-gray-800">Riesling (×0.93)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="flex items-center text-white font-semibold mb-3">
-                <MapPin className="w-5 h-5 mr-2" />
-                Winery Location
-              </label>
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g., Napa Valley, Bordeaux, Tuscany"
-                className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent backdrop-blur-sm"
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <button
-                onClick={calculatePrice}
-                disabled={isCalculating}
-                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold py-4 px-6 rounded-xl hover:from-amber-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Calculator className="w-5 h-5" />
-                {isCalculating ? 'Calculating...' : 'Calculate Price'}
-              </button>
-              
-              <button
-                onClick={reset}
-                className="px-6 py-4 bg-white/20 text-white font-semibold rounded-xl hover:bg-white/30 transition-all duration-200 backdrop-blur-sm border border-white/30"
-              >
-                Reset
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {(calculatedPrice !== null || weatherData) && (
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8">
-            {isCalculating ? (
-              <div className="text-center">
-                <div className="animate-spin w-12 h-12 border-4 border-amber-300 border-t-transparent rounded-full mx-auto mb-4"></div>
-                <p className="text-white text-lg">Analyzing climate data...</p>
-              </div>
-            ) : (
-              <>
-                <h2 className="text-2xl font-bold text-white mb-6 text-center">Price Calculation Results</h2>
-                
-                {weatherData && (
-                  <div className="bg-white/10 rounded-2xl p-6 mb-6 border border-white/20">
-                    <h3 className="text-xl font-semibold text-white mb-4">Calculation Breakdown</h3>
-                    
-                    {/* Climate Data */}
-                    <div className="mb-6">
-                      <h4 className="text-lg text-white mb-3">Climate Data Used</h4>
-                      <div className="grid md:grid-cols-3 gap-4 mb-4">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-blue-300">{weatherData.winterRainfall}mm</div>
-                          <div className="text-white/80 text-sm">Winter Rainfall</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-orange-300">{weatherData.avgGrowingTemp}°C</div>
-                          <div className="text-white/80 text-sm">Growing Season Temp</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-green-300">{weatherData.harvestRainfall}mm</div>
-                          <div className="text-white/80 text-sm">Harvest Rainfall</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Grape Type Multiplier */}
-                    <div className="bg-white/10 rounded-xl p-4 border border-white/10">
-                      <h4 className="text-lg text-white mb-2">Grape Type Analysis</h4>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-white/80">Base Price (Climate Formula):</span>
-                        <span className="text-white font-bold">${weatherData.basePrice}</span>
-                      </div>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-white/80">Grape Multiplier:</span>
-                        <span className="text-purple-300 font-bold">×{weatherData.grapeMultiplier}</span>
-                      </div>
-                      <div className="text-white/60 text-sm italic">{weatherData.grapeNotes}</div>
-                    </div>
-                  </div>
-                )}
-
-                {calculatedPrice !== null && (
-                  <div className="text-center">
-                    <div className="bg-gradient-to-r from-amber-500/20 to-orange-600/20 rounded-2xl p-8 border border-amber-400/30">
-                      <h3 className="text-xl text-white mb-2">Estimated Reasonable Price</h3>
-                      <div className="text-5xl font-bold text-amber-300 mb-2">
-                        ${calculatedPrice.toFixed(2)}
-                      </div>
-                      <p className="text-white/80">
-                        {vintage} {grapeType} from {location}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
-                  <p className="text-white/70 text-sm text-center mb-2">
-                    <strong>Formula:</strong> [12.145 + 0.00117(Winter rainfall) + 0.0614(Growing season temp) - 0.00386(Harvest rainfall)] × Grape Multiplier
-                  </p>
-                  <div className="text-xs text-white/60 text-center">
-                    Grape multipliers: Pinot Noir (1.15), Cabernet Sauvignon (1.10), Syrah (1.05), Malbec (1.00), Chardonnay (0.95), Riesling (0.93)
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-
-        <div className="mt-6 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-          <h3 className="text-lg font-semibold text-white mb-3">Supported Regions</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-white/80">
-            <div>• Napa Valley</div>
-            <div>• Bordeaux</div>
-            <div>• Burgundy</div>
-            <div>• Tuscany</div>
-            <div>• Rioja</div>
-            <div>• Barossa Valley</div>
-            <div>• Mendoza</div>
-            <div>• Willamette Valley</div>
-            <div>• Champagne</div>
-            <div>• Chianti</div>
-            <div>• Douro</div>
-            <div>• Mosel</div>
-          </div>
-          <p className="text-white/60 text-xs mt-3">
-            Don't see your region? Enter it anyway - the app will use estimated climate data.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default WinePriceCalculator;
+// --- 아티팩트 코드 (변경 없음, 단 "use client"만 추가) ---
+/* 사용자 코드 그대로 붙여넣기 */
