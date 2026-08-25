@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#3b1024" />
+  <title>Wine Price Calculator</title>
+  <meta name="description" content="Estimate a reasonable wine price using vintage, region, climate assumptions, and grape type." />
+  <style>
+    :root {
+      --text:#fff8f3; --muted:rgba(255,248,243,.72); --line:rgba(255,255,255,.16);
+      --glass:rgba(255,255,255,.10); --glass2:rgba(255,255,255,.065); --gold:#f6c768; --gold2:#e79b3f;
+    }
+    *{box-sizing:border-box} html{min-height:100%;background:#331222} body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at 10% 0%,rgba(144,62,102,.58),transparent 34%),radial-gradient(circle at 100% 20%,rgba(190,93,41,.34),transparent 34%),linear-gradient(145deg,#291024 0%,#5a1823 52%,#6d351a 100%);padding:22px 14px 46px}
+    .wrap{width:min(760px,100%);margin:auto}.card{background:var(--glass);border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 70px rgba(12,3,8,.28);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+    .hero{padding:28px}.brand{text-align:center;margin-bottom:30px}.wine-icon{width:62px;height:62px;margin:0 auto 13px;display:grid;place-items:center;border-radius:20px;background:rgba(246,199,104,.14);border:1px solid rgba(246,199,104,.30);font-size:34px}.brand h1{font-size:clamp(32px,7vw,46px);line-height:1.02;margin:0 0 9px;letter-spacing:-1.5px}.brand p{margin:0;color:var(--muted);font-size:15px}.fields{display:grid;gap:20px}.field label{display:flex;gap:8px;align-items:center;font-weight:750;margin:0 0 9px;font-size:15px}.control{width:100%;border-radius:15px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.11);color:white;padding:15px 15px;font:inherit;outline:none;transition:.18s}.control:focus{border-color:rgba(246,199,104,.8);box-shadow:0 0 0 3px rgba(246,199,104,.14)}.control::placeholder{color:rgba(255,255,255,.48)} select.control option{background:#321725;color:#fff}.actions{display:grid;grid-template-columns:1fr auto;gap:12px;margin-top:3px}.btn{border:0;border-radius:15px;padding:15px 20px;font:inherit;font-weight:820;cursor:pointer;transition:transform .15s,filter .15s,background .15s}.btn:active{transform:scale(.985)}.primary{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#38170c;box-shadow:0 12px 30px rgba(231,155,63,.2)}.primary:hover{filter:brightness(1.05)}.secondary{background:rgba(255,255,255,.11);color:#fff;border:1px solid var(--line)}
+    .result{display:none;padding:26px;margin-top:16px}.result.show{display:block;animation:up .28s ease-out}@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.result h2{text-align:center;font-size:24px;margin:0 0 20px}.breakdown{background:var(--glass2);border:1px solid var(--line);border-radius:20px;padding:20px}.breakdown h3{margin:0 0 17px;font-size:18px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{text-align:center;padding:11px 4px}.metric b{display:block;font-size:23px;margin-bottom:4px}.metric span{display:block;font-size:11px;color:var(--muted);line-height:1.25}.metric:nth-child(1) b{color:#a8d5ff}.metric:nth-child(2) b{color:#ffc383}.metric:nth-child(3) b{color:#b4e8b6}.grape-box{margin-top:14px;padding:15px;border-radius:15px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10)}.row{display:flex;justify-content:space-between;gap:16px;padding:4px 0;color:var(--muted);font-size:14px}.row strong{color:white}.note{font-size:12px;color:rgba(255,255,255,.56);font-style:italic;margin-top:6px}.pricebox{text-align:center;margin-top:18px;border-radius:21px;padding:25px 18px;background:linear-gradient(100deg,rgba(246,199,104,.15),rgba(231,155,63,.12));border:1px solid rgba(246,199,104,.28)}.pricebox h3{font-size:15px;font-weight:650;margin:0 0 6px;color:rgba(255,255,255,.82)}.price{font-size:52px;line-height:1;font-weight:900;letter-spacing:-2px;color:var(--gold)}.summary{margin-top:8px;color:var(--muted);font-size:14px}.formula{margin-top:16px;padding:13px 14px;border-radius:14px;background:rgba(0,0,0,.10);font-size:11px;line-height:1.5;color:rgba(255,255,255,.58);text-align:center}.regions{margin-top:16px;padding:22px}.regions h3{margin:0 0 12px;font-size:16px}.region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;color:var(--muted);font-size:12px}.footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.42);font-size:11px;line-height:1.5}.tag{display:inline-flex;align-items:center;gap:6px;margin-top:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:999px;padding:7px 10px;color:rgba(255,255,255,.62);font-size:11px}
+    @media(max-width:560px){body{padding:12px 10px 32px}.hero{padding:24px 18px}.brand{margin-bottom:25px}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metrics{grid-template-columns:1fr 1fr 1fr}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:48px}.regions{padding:19px 18px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card hero">
+      <div class="brand">
+        <div class="wine-icon" aria-hidden="true">🍷</div>
+        <h1>Wine Price Calculator</h1>
+        <p>Estimate reasonable wine prices using climate data</p>
+        <div class="tag">Restored original prototype · climate-based estimator</div>
+      </div>
+      <div class="fields">
+        <div class="field"><label for="vintage">📅 Vintage Year</label><input id="vintage" class="control" type="number" placeholder="e.g., 2018" min="1900" max="2026" inputmode="numeric" /></div>
+        <div class="field"><label for="grape">🍇 Grape Type</label><select id="grape" class="control"><option value="">Select grape type...</option><option value="pinot noir">Pinot Noir (×1.15)</option><option value="cabernet sauvignon">Cabernet Sauvignon (×1.10)</option><option value="syrah">Syrah (×1.05)</option><option value="malbec">Malbec (×1.00)</option><option value="chardonnay">Chardonnay (×0.95)</option><option value="riesling">Riesling (×0.93)</option></select></div>
+        <div class="field"><label for="location">📍 Winery Location</label><input id="location" class="control" type="text" placeholder="e.g., Napa Valley, Bordeaux, Tuscany" autocomplete="off" /></div>
+        <div class="actions"><button id="calculate" class="btn primary">🧮 Calculate Price</button><button id="reset" class="btn secondary">Reset</button></div>
+      </div>
+    </section>
+
+    <section id="result" class="card result" aria-live="polite">
+      <h2>Price Calculation Results</h2>
+      <div class="breakdown">
+        <h3>Calculation Breakdown</h3>
+        <div class="metrics">
+          <div class="metric"><b id="winter">—</b><span>Winter Rainfall</span></div>
+          <div class="metric"><b id="temp">—</b><span>Growing Season Temp</span></div>
+          <div class="metric"><b id="harvest">—</b><span>Harvest Rainfall</span></div>
+        </div>
+        <div class="grape-box">
+          <div class="row"><span>Base Price (Climate Formula)</span><strong id="base">—</strong></div>
+          <div class="row"><span>Grape Multiplier</span><strong id="multiplier">—</strong></div>
+          <div id="grapeNote" class="note"></div>
+        </div>
+      </div>
+      <div class="pricebox"><h3>Estimated Reasonable Price</h3><div id="price" class="price">—</div><div id="summary" class="summary"></div></div>
+      <div class="formula"><strong>Formula:</strong> [12.145 + 0.00117(Winter rainfall) + 0.0614(Growing season temp) − 0.00386(Harvest rainfall)] × Grape Multiplier<br/>Prototype estimate only; regional climate values are simplified assumptions.</div>
+    </section>
+
+    <section class="card regions"><h3>Supported Regions</h3><div class="region-grid"><div>• Napa Valley</div><div>• Bordeaux</div><div>• Burgundy</div><div>• Tuscany</div><div>• Rioja</div><div>• Barossa Valley</div><div>• Mendoza</div><div>• Willamette Valley</div><div>• Champagne</div><div>• Chianti</div><div>• Douro</div><div>• Mosel</div></div></section>
+    <div class="footer">A lightweight prototype for exploring how vintage climate signals might inform a baseline wine-price estimate.</div>
+  </main>
+<script>
+  const grapeMultipliers={
+    'pinot noir':{multiplier:1.15,notes:'High sensitivity & value'},
+    'cabernet sauvignon':{multiplier:1.10,notes:'Robust red, highly valued'},
+    'malbec':{multiplier:1.00,notes:'Baseline for Mendoza'},
+    'chardonnay':{multiplier:.95,notes:'Market-saturated white'},
+    'riesling':{multiplier:.93,notes:'Niche but quality-driven'},
+    'syrah':{multiplier:1.05,notes:'Popular warm-climate red'}
+  };
+  const regionalPatterns={
+    'napa valley':{winterRainfall:600,avgGrowingTemp:20.5,harvestRainfall:25},
+    'bordeaux':{winterRainfall:800,avgGrowingTemp:18.2,harvestRainfall:85},
+    'burgundy':{winterRainfall:650,avgGrowingTemp:17.8,harvestRainfall:75},
+    'tuscany':{winterRainfall:700,avgGrowingTemp:21.3,harvestRainfall:45},
+    'rioja':{winterRainfall:450,avgGrowingTemp:19.1,harvestRainfall:55},
+    'barossa valley':{winterRainfall:350,avgGrowingTemp:22.1,harvestRainfall:15},
+    'mendoza':{winterRainfall:200,avgGrowingTemp:19.5,harvestRainfall:35},
+    'willamette valley':{winterRainfall:1200,avgGrowingTemp:17.5,harvestRainfall:150},
+    'champagne':{winterRainfall:600,avgGrowingTemp:16.2,harvestRainfall:65},
+    'chianti':{winterRainfall:750,avgGrowingTemp:20.8,harvestRainfall:50},
+    'douro':{winterRainfall:1100,avgGrowingTemp:22.5,harvestRainfall:25},
+    'mosel':{winterRainfall:700,avgGrowingTemp:15.8,harvestRainfall:80}
+  };
+  const $=id=>document.getElementById(id);
+  const getWeatherVariation=(baseValue,vintage)=>{const currentYear=new Date().getFullYear();const yearDiff=currentYear-parseInt(vintage,10);const randomFactor=(Math.sin(parseInt(vintage,10)*.1)*.15)+1;return baseValue*randomFactor*(1+(yearDiff*.002));};
+  function calculate(){
+    const vintage=$('vintage').value.trim(),location=$('location').value.trim(),grape=$('grape').value;
+    if(!vintage||!location||!grape){alert('Please enter vintage year, winery location, and grape type');return;}
+    const y=Number(vintage); if(!Number.isFinite(y)||y<1900||y>new Date().getFullYear()){alert('Please enter a valid vintage year');return;}
+    const locationKey=location.toLowerCase(); let baseWeather=null;
+    for(const region in regionalPatterns){if(locationKey.includes(region)||region.includes(locationKey)){baseWeather=regionalPatterns[region];break;}}
+    if(!baseWeather) baseWeather={winterRainfall:600,avgGrowingTemp:19,harvestRainfall:60};
+    const winterRainfall=getWeatherVariation(baseWeather.winterRainfall,vintage);
+    const avgGrowingTemp=getWeatherVariation(baseWeather.avgGrowingTemp,vintage);
+    const harvestRainfall=getWeatherVariation(baseWeather.harvestRainfall,vintage);
+    const gm=grapeMultipliers[grape]||{multiplier:1,notes:'Standard variety'};
+    const basePrice=12.145+(.00117*winterRainfall)+(.0614*avgGrowingTemp)-(.00386*harvestRainfall);
+    const finalPrice=basePrice*gm.multiplier;
+    $('winter').textContent=winterRainfall.toFixed(1)+'mm'; $('temp').textContent=avgGrowingTemp.toFixed(1)+'°C'; $('harvest').textContent=harvestRainfall.toFixed(1)+'mm';
+    $('base').textContent='$'+basePrice.toFixed(2); $('multiplier').textContent='×'+gm.multiplier.toFixed(2); $('grapeNote').textContent=gm.notes;
+    $('price').textContent='$'+finalPrice.toFixed(2); $('summary').textContent=vintage+' '+grape+' from '+location;
+    $('result').classList.add('show'); setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),30);
+  }
+  function reset(){['vintage','location'].forEach(id=>$(id).value='');$('grape').value='';$('result').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});}
+  $('calculate').addEventListener('click',calculate); $('reset').addEventListener('click',reset); document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey)calculate();});
+</script>
+</body>
+</html>
