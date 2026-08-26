@@ -17,24 +17,11 @@
     .wrap{width:min(760px,100%);margin:auto}
     .card{background:var(--glass);border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 70px rgba(12,3,8,.28);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
     .hero{padding:28px}
-    .brand{text-align:center;margin-bottom:22px}
+    .brand{text-align:center;margin-bottom:28px}
     .wine-icon{width:62px;height:62px;margin:0 auto 13px;display:grid;place-items:center;border-radius:20px;background:rgba(246,199,104,.14);border:1px solid rgba(246,199,104,.30);font-size:34px}
     .brand h1{font-size:clamp(32px,7vw,46px);line-height:1.02;margin:0 0 9px;letter-spacing:-1.5px}
     .brand p{margin:0 auto;color:var(--muted);font-size:15px;max-width:560px;line-height:1.5}
     .tag{display:inline-flex;align-items:center;gap:6px;margin-top:12px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);border-radius:999px;padding:7px 10px;color:#f8d991;font-size:11px}
-    .origin{margin:0 0 26px;padding:20px;border-radius:22px;background:rgba(18,4,11,.18);border:1px solid rgba(255,255,255,.13)}
-    .kicker{font-size:10px;letter-spacing:1.7px;font-weight:900;color:#f6c768;margin-bottom:8px}
-    .origin h2{margin:0 0 9px;font-size:21px;line-height:1.2;letter-spacing:-.4px}
-    .origin-copy{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
-    .equation-card{margin-top:15px;padding:16px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10)}
-    .equation-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:7px}
-    .equation{font-size:12px;font-weight:760;line-height:1.65;color:#fff1d3}
-    .equation span{color:#f6c768}
-    .drivers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-    .driver{padding:11px;border-radius:13px;background:rgba(255,255,255,.055);font-size:11px;line-height:1.35;color:var(--muted)}
-    .driver b{display:block;color:white;font-size:12px;margin-bottom:4px}
-    .driver strong{color:#f6c768}
-    .origin-note{margin:12px 0 0;font-size:10.5px;color:rgba(255,255,255,.48);line-height:1.5}
     .fields{display:grid;gap:20px}
     .field label{display:flex;gap:8px;align-items:center;font-weight:750;margin:0 0 9px;font-size:15px}
     .control{width:100%;border-radius:15px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.11);color:white;padding:15px 15px;font:inherit;outline:none;transition:.18s}
@@ -70,13 +57,34 @@
     .model-note{margin:11px auto 0;max-width:560px;color:rgba(255,255,255,.52);font-size:10.5px;line-height:1.45}
     .formula{margin-top:16px;padding:14px;border-radius:14px;background:rgba(0,0,0,.10);font-size:11px;line-height:1.6;color:rgba(255,255,255,.58);text-align:left}
     .formula strong{color:rgba(255,255,255,.82)}
+    .origin-wrap{margin-top:16px;overflow:hidden}
+    .origin-toggle{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;font-weight:850;font-size:16px;user-select:none}
+    .origin-toggle::-webkit-details-marker{display:none}
+    .origin-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:-4px;border-radius:24px}
+    .origin-toggle-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .origin-toggle-copy small{font-size:10px;letter-spacing:1.5px;color:#f6c768}
+    .origin-toggle-copy span{font-size:16px;color:white}
+    .chevron{font-size:18px;color:#f6c768;transition:transform .2s ease}
+    details[open] .chevron{transform:rotate(180deg)}
+    .origin{padding:0 22px 22px;border-top:1px solid rgba(255,255,255,.10)}
+    .origin h2{margin:20px 0 9px;font-size:21px;line-height:1.2;letter-spacing:-.4px}
+    .origin-copy{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+    .equation-card{margin-top:15px;padding:16px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10)}
+    .equation-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:7px}
+    .equation{font-size:12px;font-weight:760;line-height:1.65;color:#fff1d3}
+    .equation span{color:#f6c768}
+    .drivers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+    .driver{padding:11px;border-radius:13px;background:rgba(255,255,255,.055);font-size:11px;line-height:1.35;color:var(--muted)}
+    .driver b{display:block;color:white;font-size:12px;margin-bottom:4px}
+    .driver strong{color:#f6c768}
+    .origin-note{margin:12px 0 0;font-size:10.5px;color:rgba(255,255,255,.48);line-height:1.5}
     .regions{margin-top:16px;padding:22px}
     .regions h3{margin:0 0 5px;font-size:16px}
     .regions p{font-size:11px;color:rgba(255,255,255,.48);margin:0 0 12px;line-height:1.45}
     .region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;color:var(--muted);font-size:12px}
     .footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.42);font-size:11px;line-height:1.5}
     @media(max-width:560px){
-      body{padding:12px 10px 32px}.hero{padding:24px 18px}.brand{margin-bottom:20px}.origin{padding:17px 15px}.drivers{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metrics{grid-template-columns:1fr 1fr 1fr}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:48px}.regions{padding:19px 18px}
+      body{padding:12px 10px 32px}.hero{padding:24px 18px}.brand{margin-bottom:25px}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metrics{grid-template-columns:1fr 1fr 1fr}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:48px}.regions{padding:19px 18px}.origin-toggle{padding:18px}.origin{padding:0 18px 18px}.drivers{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -86,26 +94,8 @@
       <div class="brand">
         <div class="wine-icon" aria-hidden="true">🍷</div>
         <h1>Wine Price Calculator</h1>
-        <p>A Freakonomics-inspired experiment: can weather tell us what a vintage might be worth?</p>
+        <p>Estimate a wine's value signal from vintage, region and climate.</p>
         <div class="tag">Inspired by Orley Ashenfelter's Bordeaux Equation</div>
-      </div>
-
-      <div class="origin">
-        <div class="kicker">WHY THIS EXISTS</div>
-        <h2>This started with a wonderfully weird idea.</h2>
-        <p class="origin-copy">Economist Orley Ashenfelter challenged the wine world with a simple question: could you predict a Bordeaux vintage from weather data — without even tasting the wine? That idea, popularized for a broad audience through data-driven economics stories such as <em>Freakonomics</em>, became the starting point for this prototype.</p>
-
-        <div class="equation-card">
-          <div class="equation-label">The famous simplified Bordeaux Equation</div>
-          <div class="equation">Score = 12.145 + <span>0.00117 × Winter Rain</span> + <span>0.0614 × Growing-Season Temp</span> − <span>0.00386 × Harvest Rain</span></div>
-        </div>
-
-        <div class="drivers">
-          <div class="driver"><b>🌧️ Winter rain <strong>+</strong></b>More stored water can help vines through the growing season.</div>
-          <div class="driver"><b>☀️ Growing heat <strong>+</strong></b>Warmer growing seasons can help grapes ripen more fully.</div>
-          <div class="driver"><b>🌦️ Harvest rain <strong>−</strong></b>More rain near harvest can dilute fruit and increase risk.</div>
-        </div>
-        <p class="origin-note">Ashenfelter's original research focused on mature red Bordeaux and auction-price patterns. This prototype extends the idea beyond Bordeaux with simplified region and grape assumptions, so treat it as an experiment — not a live retail quote.</p>
       </div>
 
       <div class="fields">
@@ -142,6 +132,32 @@
 
       <div class="formula"><strong>What is original vs. what is ours?</strong><br/>Original idea: winter rainfall + growing-season temperature − harvest rainfall. Prototype extension: apply a grape multiplier and simplified climate assumptions so the interaction works across more regions. The extension is exploratory and should not be attributed to Ashenfelter.</div>
     </section>
+
+    <details class="card origin-wrap">
+      <summary class="origin-toggle">
+        <div class="origin-toggle-copy">
+          <small>WHY THIS EXISTS</small>
+          <span>The Freakonomics idea behind the calculator</span>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="origin">
+        <h2>This started with a wonderfully weird idea.</h2>
+        <p class="origin-copy">Economist Orley Ashenfelter challenged the wine world with a simple question: could you predict a Bordeaux vintage from weather data — without even tasting the wine? That idea, popularized for a broad audience through data-driven economics stories such as <em>Freakonomics</em>, became the starting point for this prototype.</p>
+
+        <div class="equation-card">
+          <div class="equation-label">The famous simplified Bordeaux Equation</div>
+          <div class="equation">Score = 12.145 + <span>0.00117 × Winter Rain</span> + <span>0.0614 × Growing-Season Temp</span> − <span>0.00386 × Harvest Rain</span></div>
+        </div>
+
+        <div class="drivers">
+          <div class="driver"><b>🌧️ Winter rain <strong>+</strong></b>More stored water can help vines through the growing season.</div>
+          <div class="driver"><b>☀️ Growing heat <strong>+</strong></b>Warmer growing seasons can help grapes ripen more fully.</div>
+          <div class="driver"><b>🌦️ Harvest rain <strong>−</strong></b>More rain near harvest can dilute fruit and increase risk.</div>
+        </div>
+        <p class="origin-note">Ashenfelter's original research focused on mature red Bordeaux and auction-price patterns. This prototype extends the idea beyond Bordeaux with simplified region and grape assumptions, so treat it as an experiment — not a live retail quote.</p>
+      </div>
+    </details>
 
     <section class="card regions">
       <h3>Prototype regions</h3>
