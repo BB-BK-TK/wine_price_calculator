@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#3b1024" />
   <title>Wine Price Calculator</title>
-  <meta name="description" content="A Freakonomics-inspired wine value experiment based on Orley Ashenfelter's Bordeaux Equation." />
+  <meta name="description" content="A Freakonomics-inspired experiment in what data can — and can’t — tell us about wine value." />
   <style>
     :root {
       --text:#fff8f3; --muted:rgba(255,248,243,.72); --line:rgba(255,255,255,.16);
@@ -57,34 +57,29 @@
     .model-note{margin:11px auto 0;max-width:560px;color:rgba(255,255,255,.52);font-size:10.5px;line-height:1.45}
     .formula{margin-top:16px;padding:14px;border-radius:14px;background:rgba(0,0,0,.10);font-size:11px;line-height:1.6;color:rgba(255,255,255,.58);text-align:left}
     .formula strong{color:rgba(255,255,255,.82)}
-    .origin-wrap{margin-top:16px;overflow:hidden}
-    .origin-toggle{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;font-weight:850;font-size:16px;user-select:none}
-    .origin-toggle::-webkit-details-marker{display:none}
-    .origin-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:-4px;border-radius:24px}
-    .origin-toggle-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
-    .origin-toggle-copy small{font-size:10px;letter-spacing:1.5px;color:#f6c768}
-    .origin-toggle-copy span{font-size:16px;color:white}
-    .chevron{font-size:18px;color:#f6c768;transition:transform .2s ease}
-    details[open] .chevron{transform:rotate(180deg)}
-    .origin{padding:0 22px 22px;border-top:1px solid rgba(255,255,255,.10)}
-    .origin h2{margin:20px 0 9px;font-size:21px;line-height:1.2;letter-spacing:-.4px}
-    .origin-copy{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
-    .equation-card{margin-top:15px;padding:16px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10)}
-    .equation-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:7px}
-    .equation{font-size:12px;font-weight:760;line-height:1.65;color:#fff1d3}
-    .equation span{color:#f6c768}
-    .drivers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-    .driver{padding:11px;border-radius:13px;background:rgba(255,255,255,.055);font-size:11px;line-height:1.35;color:var(--muted)}
-    .driver b{display:block;color:white;font-size:12px;margin-bottom:4px}
-    .driver strong{color:#f6c768}
-    .origin-note{margin:12px 0 0;font-size:10.5px;color:rgba(255,255,255,.48);line-height:1.5}
+    .info-trigger{font:inherit;cursor:pointer;transition:background .18s,border-color .18s,transform .15s}
+    .info-trigger:hover{background:rgba(246,199,104,.14);border-color:rgba(246,199,104,.42)}
+    .info-trigger:active{transform:scale(.98)}
+    .info-trigger:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+    body.modal-open{overflow:hidden}
+    .modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
+    .modal[hidden]{display:none}
+    .modal-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(14,4,10,.72);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);cursor:pointer}
+    .modal-sheet{position:relative;width:min(560px,100%);max-height:min(78vh,680px);overflow:auto;padding:30px;border:1px solid rgba(255,255,255,.18);border-radius:26px;background:linear-gradient(145deg,#3a1428,#5b2024 72%,#62301d);box-shadow:0 28px 90px rgba(8,2,6,.55);animation:modalIn .22s ease-out}
+    @keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    .modal-close{position:absolute;top:15px;right:15px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.09);color:white;font-size:20px;line-height:1;cursor:pointer}
+    .modal-close:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+    .modal-kicker{padding-right:46px;color:var(--gold);font-size:10px;font-weight:800;letter-spacing:1.5px}
+    .modal h2{margin:10px 42px 16px 0;font-size:27px;line-height:1.12;letter-spacing:-.6px}
+    .modal p{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.65}
+    .modal-boundary{margin-top:18px;padding:15px 16px;border-radius:15px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);color:#ffe5ad;font-size:12px;line-height:1.55}
     .regions{margin-top:16px;padding:22px}
     .regions h3{margin:0 0 5px;font-size:16px}
     .regions p{font-size:11px;color:rgba(255,255,255,.48);margin:0 0 12px;line-height:1.45}
     .region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;color:var(--muted);font-size:12px}
     .footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.42);font-size:11px;line-height:1.5}
     @media(max-width:560px){
-      body{padding:12px 10px 32px}.hero{padding:24px 18px}.brand{margin-bottom:25px}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metrics{grid-template-columns:1fr 1fr 1fr}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:48px}.regions{padding:19px 18px}.origin-toggle{padding:18px}.origin{padding:0 18px 18px}.drivers{grid-template-columns:1fr}
+      body{padding:12px 10px 32px}.hero{padding:24px 18px}.brand{margin-bottom:25px}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metrics{grid-template-columns:1fr 1fr 1fr}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:48px}.regions{padding:19px 18px}.modal{place-items:end center;padding:0}.modal-sheet{width:100%;max-height:82vh;padding:27px 22px 24px;border-radius:24px 24px 0 0;animation:sheetUp .24s ease-out}@keyframes sheetUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
     }
   </style>
 </head>
@@ -94,8 +89,8 @@
       <div class="brand">
         <div class="wine-icon" aria-hidden="true">🍷</div>
         <h1>Wine Price Calculator</h1>
-        <p>Estimate a wine's value signal from vintage, region and climate.</p>
-        <div class="tag">Inspired by Orley Ashenfelter's Bordeaux Equation</div>
+        <p>A Freakonomics-inspired experiment in what data can — and can’t — tell us about wine value.</p>
+        <button id="originOpen" class="tag info-trigger" type="button" aria-haspopup="dialog" aria-controls="originModal">Why Freakonomics? ↗</button>
       </div>
 
       <div class="fields">
@@ -133,32 +128,6 @@
       <div class="formula"><strong>What is original vs. what is ours?</strong><br/>Original idea: winter rainfall + growing-season temperature − harvest rainfall. Prototype extension: apply a grape multiplier and simplified climate assumptions so the interaction works across more regions. The extension is exploratory and should not be attributed to Ashenfelter.</div>
     </section>
 
-    <details class="card origin-wrap">
-      <summary class="origin-toggle">
-        <div class="origin-toggle-copy">
-          <small>WHY THIS EXISTS</small>
-          <span>The Freakonomics idea behind the calculator</span>
-        </div>
-        <span class="chevron" aria-hidden="true">⌄</span>
-      </summary>
-      <div class="origin">
-        <h2>This started with a wonderfully weird idea.</h2>
-        <p class="origin-copy">Economist Orley Ashenfelter challenged the wine world with a simple question: could you predict a Bordeaux vintage from weather data — without even tasting the wine? That idea, popularized for a broad audience through data-driven economics stories such as <em>Freakonomics</em>, became the starting point for this prototype.</p>
-
-        <div class="equation-card">
-          <div class="equation-label">The famous simplified Bordeaux Equation</div>
-          <div class="equation">Score = 12.145 + <span>0.00117 × Winter Rain</span> + <span>0.0614 × Growing-Season Temp</span> − <span>0.00386 × Harvest Rain</span></div>
-        </div>
-
-        <div class="drivers">
-          <div class="driver"><b>🌧️ Winter rain <strong>+</strong></b>More stored water can help vines through the growing season.</div>
-          <div class="driver"><b>☀️ Growing heat <strong>+</strong></b>Warmer growing seasons can help grapes ripen more fully.</div>
-          <div class="driver"><b>🌦️ Harvest rain <strong>−</strong></b>More rain near harvest can dilute fruit and increase risk.</div>
-        </div>
-        <p class="origin-note">Ashenfelter's original research focused on mature red Bordeaux and auction-price patterns. This prototype extends the idea beyond Bordeaux with simplified region and grape assumptions, so treat it as an experiment — not a live retail quote.</p>
-      </div>
-    </details>
-
     <section class="card regions">
       <h3>Prototype regions</h3>
       <p>The original Bordeaux Equation was built for Bordeaux; the regions below are experimental extensions in this prototype.</p>
@@ -166,6 +135,17 @@
     </section>
     <div class="footer">Built from a question: how much of wine value can data explain before anyone takes a sip?</div>
   </main>
+  <div id="originModal" class="modal" hidden>
+    <button class="modal-backdrop" type="button" data-modal-close aria-label="Close explanation"></button>
+    <section class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="originTitle" tabindex="-1">
+      <button class="modal-close" type="button" data-modal-close aria-label="Close explanation">×</button>
+      <div class="modal-kicker">THE IDEA BEHIND IT</div>
+      <h2 id="originTitle">Can data predict a great vintage?</h2>
+      <p>This prototype started with economist Orley Ashenfelter’s research on Bordeaux wines. His model found relationships between auction prices, vintage age, and weather conditions such as winter rain, growing-season temperature, and harvest rain.</p>
+      <p>This calculator borrows that idea, then experiments with simplified regional assumptions and grape adjustments.</p>
+      <div class="modal-boundary">It produces a relative value signal — not an actual bottle price, quality rating, or production cost.</div>
+    </section>
+  </div>
 <script>
   const grapeMultipliers={
     'pinot noir':{multiplier:1.15,notes:'Prototype adjustment: high-sensitivity, high-value variety'},
@@ -216,9 +196,15 @@
     setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),30);
   }
   function reset(){['vintage','location'].forEach(id=>$(id).value='');$('grape').value='';$('result').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});}
+  const originModal=$('originModal');
+  const modalSheet=originModal.querySelector('.modal-sheet');
+  function openOrigin(){originModal.hidden=false;document.body.classList.add('modal-open');modalSheet.focus();}
+  function closeOrigin(){originModal.hidden=true;document.body.classList.remove('modal-open');$('originOpen').focus();}
+  $('originOpen').addEventListener('click',openOrigin);
+  originModal.querySelectorAll('[data-modal-close]').forEach(el=>el.addEventListener('click',closeOrigin));
   $('calculate').addEventListener('click',calculate);
   $('reset').addEventListener('click',reset);
-  document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey)calculate();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!originModal.hidden){closeOrigin();return;}if(e.key==='Enter'&&!e.shiftKey&&originModal.hidden&&e.target.id!=='originOpen')calculate();});
 </script>
 </body>
 </html>
