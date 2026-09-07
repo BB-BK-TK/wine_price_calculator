@@ -1,0 +1,29 @@
+name: Wine Price Research Benchmark
+
+on:
+  push:
+    branches: ["research/wine-fair-value-benchmark"]
+    paths:
+      - "research/**"
+      - ".github/workflows/wine-price-benchmark.yml"
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy scipy scikit-learn
+      - name: Run benchmark
+        run: python research/benchmark.py
+      - name: Show results
+        run: cat research/results.json
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: wine-price-benchmark-results
+          path: research/results.json
