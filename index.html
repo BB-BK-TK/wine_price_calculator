@@ -7,204 +7,145 @@
   <title>Wine Price Calculator</title>
   <meta name="description" content="A Freakonomics-inspired experiment in what data can — and can’t — tell us about wine value." />
   <style>
-    :root {
-      --text:#fff8f3; --muted:rgba(255,248,243,.72); --line:rgba(255,255,255,.16);
-      --glass:rgba(255,255,255,.10); --glass2:rgba(255,255,255,.065); --gold:#f6c768; --gold2:#e79b3f;
-    }
-    *{box-sizing:border-box}
-    html{min-height:100%;background:#331222}
+    :root{--text:#fff8f3;--muted:rgba(255,248,243,.72);--line:rgba(255,255,255,.16);--glass:rgba(255,255,255,.10);--glass2:rgba(255,255,255,.065);--gold:#f6c768;--gold2:#e79b3f}
+    *{box-sizing:border-box}html{min-height:100%;background:#331222}
     body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at 10% 0%,rgba(144,62,102,.58),transparent 34%),radial-gradient(circle at 100% 20%,rgba(190,93,41,.34),transparent 34%),linear-gradient(145deg,#291024 0%,#5a1823 52%,#6d351a 100%);padding:22px 14px 46px}
-    .wrap{width:min(760px,100%);margin:auto}
-    .card{background:var(--glass);border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 70px rgba(12,3,8,.28);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-    .hero{padding:28px}
-    .brand{text-align:center;margin-bottom:28px}
-    .wine-icon{width:62px;height:62px;margin:0 auto 13px;display:grid;place-items:center;border-radius:20px;background:rgba(246,199,104,.14);border:1px solid rgba(246,199,104,.30);font-size:34px}
-    .brand h1{font-size:clamp(32px,7vw,46px);line-height:1.02;margin:0 0 9px;letter-spacing:-1.5px}
-    .brand p{margin:0 auto;color:var(--muted);font-size:15px;max-width:560px;line-height:1.5}
+    .wrap{width:min(760px,100%);margin:auto}.card{background:var(--glass);border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 70px rgba(12,3,8,.28);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+    .hero{padding:28px}.brand{text-align:center;margin-bottom:24px}.wine-icon{width:62px;height:62px;margin:0 auto 13px;display:grid;place-items:center;border-radius:20px;background:rgba(246,199,104,.14);border:1px solid rgba(246,199,104,.30);font-size:34px}
+    .brand h1{font-size:clamp(32px,7vw,46px);line-height:1.02;margin:0 0 9px;letter-spacing:-1.5px}.brand p{margin:0 auto;color:var(--muted);font-size:15px;max-width:560px;line-height:1.5}
     .tag{display:inline-flex;align-items:center;gap:6px;margin-top:12px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);border-radius:999px;padding:7px 10px;color:#f8d991;font-size:11px}
-    .fields{display:grid;gap:20px}
-    .field label{display:flex;gap:8px;align-items:center;font-weight:750;margin:0 0 9px;font-size:15px}
-    .control{width:100%;border-radius:15px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.11);color:white;padding:15px 15px;font:inherit;outline:none;transition:.18s}
-    .control:focus{border-color:rgba(246,199,104,.8);box-shadow:0 0 0 3px rgba(246,199,104,.14)}
-    .control::placeholder{color:rgba(255,255,255,.48)}
-    select.control option{background:#321725;color:#fff}
-    .actions{display:grid;grid-template-columns:1fr auto;gap:12px;margin-top:3px}
-    .btn{border:0;border-radius:15px;padding:15px 20px;font:inherit;font-weight:820;cursor:pointer;transition:transform .15s,filter .15s,background .15s}
-    .btn:active{transform:scale(.985)}
-    .primary{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#38170c;box-shadow:0 12px 30px rgba(231,155,63,.2)}
-    .primary:hover{filter:brightness(1.05)}
-    .secondary{background:rgba(255,255,255,.11);color:#fff;border:1px solid var(--line)}
-    .result{display:none;padding:26px;margin-top:16px}
-    .result.show{display:block;animation:up .28s ease-out}
-    @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    .result h2{text-align:center;font-size:24px;margin:0 0 20px}
-    .breakdown{background:var(--glass2);border:1px solid var(--line);border-radius:20px;padding:20px}
-    .breakdown h3{margin:0 0 5px;font-size:18px}
-    .breakdown-sub{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:17px;line-height:1.45}
-    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .metric{text-align:center;padding:11px 4px}
-    .metric b{display:block;font-size:23px;margin-bottom:4px}
-    .metric span{display:block;font-size:11px;color:var(--muted);line-height:1.25}
-    .metric:nth-child(1) b{color:#a8d5ff}.metric:nth-child(2) b{color:#ffc383}.metric:nth-child(3) b{color:#b4e8b6}
-    .grape-box{margin-top:14px;padding:15px;border-radius:15px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10)}
-    .row{display:flex;justify-content:space-between;gap:16px;padding:5px 0;color:var(--muted);font-size:14px}
-    .row strong{color:white}
-    .note{font-size:12px;color:rgba(255,255,255,.56);font-style:italic;margin-top:7px;line-height:1.45}
-    .pricebox{text-align:center;margin-top:18px;border-radius:21px;padding:25px 18px;background:linear-gradient(100deg,rgba(246,199,104,.15),rgba(231,155,63,.12));border:1px solid rgba(246,199,104,.28)}
-    .pricebox h3{font-size:15px;font-weight:650;margin:0 0 6px;color:rgba(255,255,255,.82)}
-    .price{font-size:52px;line-height:1;font-weight:900;letter-spacing:-2px;color:var(--gold)}
-    .summary{margin-top:8px;color:var(--muted);font-size:14px}
-    .model-note{margin:11px auto 0;max-width:560px;color:rgba(255,255,255,.52);font-size:10.5px;line-height:1.45}
-    .formula{margin-top:16px;padding:14px;border-radius:14px;background:rgba(0,0,0,.10);font-size:11px;line-height:1.6;color:rgba(255,255,255,.58);text-align:left}
-    .formula strong{color:rgba(255,255,255,.82)}
-    .info-trigger{font:inherit;cursor:pointer;transition:background .18s,border-color .18s,transform .15s}
-    .info-trigger:hover{background:rgba(246,199,104,.14);border-color:rgba(246,199,104,.42)}
-    .info-trigger:active{transform:scale(.98)}
-    .info-trigger:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-    body.modal-open{overflow:hidden}
-    .modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
-    .modal[hidden]{display:none}
-    .modal-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(14,4,10,.72);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);cursor:pointer}
-    .modal-sheet{position:relative;width:min(560px,100%);max-height:min(78vh,680px);overflow:auto;padding:30px;border:1px solid rgba(255,255,255,.18);border-radius:26px;background:linear-gradient(145deg,#3a1428,#5b2024 72%,#62301d);box-shadow:0 28px 90px rgba(8,2,6,.55);animation:modalIn .22s ease-out}
-    @keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
-    .modal-close{position:absolute;top:15px;right:15px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.09);color:white;font-size:20px;line-height:1;cursor:pointer}
-    .modal-close:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-    .modal-kicker{padding-right:46px;color:var(--gold);font-size:10px;font-weight:800;letter-spacing:1.5px}
-    .modal h2{margin:10px 42px 16px 0;font-size:27px;line-height:1.12;letter-spacing:-.6px}
-    .modal p{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.65}
-    .modal-boundary{margin-top:18px;padding:15px 16px;border-radius:15px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);color:#ffe5ad;font-size:12px;line-height:1.55}
-    .regions{margin-top:16px;padding:22px}
-    .regions h3{margin:0 0 5px;font-size:16px}
-    .regions p{font-size:11px;color:rgba(255,255,255,.48);margin:0 0 12px;line-height:1.45}
-    .region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;color:var(--muted);font-size:12px}
-    .footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.42);font-size:11px;line-height:1.5}
-    @media(max-width:560px){
-      body{padding:12px 10px 32px}.hero{padding:24px 18px}.brand{margin-bottom:25px}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metrics{grid-template-columns:1fr 1fr 1fr}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:48px}.regions{padding:19px 18px}.modal{place-items:end center;padding:0}.modal-sheet{width:100%;max-height:82vh;padding:27px 22px 24px;border-radius:24px 24px 0 0;animation:sheetUp .24s ease-out}@keyframes sheetUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-    }
+    .model-toggle{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:rgba(0,0,0,.16);border:1px solid var(--line);border-radius:17px;margin:0 0 10px}
+    .model-tab{border:0;background:transparent;color:var(--muted);border-radius:13px;padding:12px 10px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;transition:.18s}
+    .model-tab.active{background:rgba(255,255,255,.14);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.15)}
+    .model-caption{text-align:center;color:rgba(255,255,255,.53);font-size:11px;margin:0 0 22px}.fields{display:grid;gap:20px}
+    .field label{display:flex;gap:8px;align-items:center;font-weight:750;margin:0 0 9px;font-size:15px}.control{width:100%;border-radius:15px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.11);color:white;padding:15px;font:inherit;outline:none;transition:.18s}
+    .control:focus{border-color:rgba(246,199,104,.8);box-shadow:0 0 0 3px rgba(246,199,104,.14)}.control::placeholder{color:rgba(255,255,255,.48)}select.control option{background:#321725;color:#fff}
+    .our-only{display:none}.our-mode .our-only{display:block}.actions{display:grid;grid-template-columns:1fr auto;gap:12px;margin-top:3px}.btn{border:0;border-radius:15px;padding:15px 20px;font:inherit;font-weight:820;cursor:pointer;transition:transform .15s,filter .15s}.btn:active{transform:scale(.985)}
+    .primary{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#38170c;box-shadow:0 12px 30px rgba(231,155,63,.2)}.secondary{background:rgba(255,255,255,.11);color:#fff;border:1px solid var(--line)}
+    .result{display:none;padding:26px;margin-top:16px}.result.show{display:block;animation:up .28s ease-out}@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .result h2{text-align:center;font-size:24px;margin:0 0 20px}.breakdown{background:var(--glass2);border:1px solid var(--line);border-radius:20px;padding:20px}.breakdown h3{margin:0 0 5px;font-size:18px}.breakdown-sub{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:17px;line-height:1.45}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{text-align:center;padding:11px 4px}.metric b{display:block;font-size:23px;margin-bottom:4px}.metric span{display:block;font-size:11px;color:var(--muted);line-height:1.25}.metric:nth-child(1) b{color:#a8d5ff}.metric:nth-child(2) b{color:#ffc383}.metric:nth-child(3) b{color:#b4e8b6}
+    .grape-box{margin-top:14px;padding:15px;border-radius:15px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10)}.row{display:flex;justify-content:space-between;gap:16px;padding:5px 0;color:var(--muted);font-size:14px}.row strong{color:white}.note{font-size:12px;color:rgba(255,255,255,.56);font-style:italic;margin-top:7px;line-height:1.45}
+    .pricebox{text-align:center;margin-top:18px;border-radius:21px;padding:25px 18px;background:linear-gradient(100deg,rgba(246,199,104,.15),rgba(231,155,63,.12));border:1px solid rgba(246,199,104,.28)}.pricebox h3{font-size:15px;font-weight:650;margin:0 0 6px;color:rgba(255,255,255,.82)}.price{font-size:52px;line-height:1;font-weight:900;letter-spacing:-2px;color:var(--gold)}.summary{margin-top:8px;color:var(--muted);font-size:14px}.model-note{margin:11px auto 0;max-width:560px;color:rgba(255,255,255,.52);font-size:10.5px;line-height:1.45}
+    .why{margin-top:16px;padding:20px;border-radius:20px;background:rgba(255,255,255,.065);border:1px solid var(--line)}.why h3{margin:0 0 4px;font-size:18px}.why-intro{font-size:12px;color:var(--muted);margin-bottom:14px}.clue{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.09)}.clue:first-of-type{border-top:0}.clue-icon{font-size:20px}.clue-q{font-size:13px;font-weight:750}.clue-a{font-size:12px;color:var(--muted);margin-top:2px}.clue-dir{font-weight:900;color:#f8d991}
+    .verdict{margin-top:12px;padding:15px;border-radius:15px;background:rgba(246,199,104,.09);border:1px solid rgba(246,199,104,.2);font-size:13px;line-height:1.55;color:#ffe6b0}.formula{margin-top:16px;padding:14px;border-radius:14px;background:rgba(0,0,0,.10);font-size:11px;line-height:1.6;color:rgba(255,255,255,.58);text-align:left}.formula strong{color:rgba(255,255,255,.82)}
+    .regions{margin-top:16px;padding:22px}.regions h3{margin:0 0 5px;font-size:16px}.regions p{font-size:11px;color:rgba(255,255,255,.48);margin:0 0 12px;line-height:1.45}.region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;color:var(--muted);font-size:12px}.footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.42);font-size:11px;line-height:1.5}
+    .info-trigger{font:inherit;cursor:pointer}.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}.modal-backdrop{position:absolute;inset:0;border:0;background:rgba(14,4,10,.72);backdrop-filter:blur(7px);width:100%;height:100%}.modal-sheet{position:relative;width:min(560px,100%);max-height:78vh;overflow:auto;padding:30px;border:1px solid rgba(255,255,255,.18);border-radius:26px;background:linear-gradient(145deg,#3a1428,#5b2024 72%,#62301d);box-shadow:0 28px 90px rgba(8,2,6,.55)}.modal-close{position:absolute;top:15px;right:15px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.09);color:#fff;font-size:20px}.modal-kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:1.5px}.modal h2{margin:10px 42px 16px 0;font-size:27px}.modal p{color:var(--muted);font-size:14px;line-height:1.65}.modal-boundary{margin-top:18px;padding:15px;border-radius:15px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);color:#ffe5ad;font-size:12px;line-height:1.55}
+    @media(max-width:560px){body{padding:12px 10px 32px}.hero{padding:24px 18px}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:44px}.regions{padding:19px 18px}.modal{place-items:end center;padding:0}.modal-sheet{width:100%;max-height:82vh;padding:27px 22px 24px;border-radius:24px 24px 0 0}}
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="card hero">
-      <div class="brand">
-        <div class="wine-icon" aria-hidden="true">🍷</div>
-        <h1>Wine Price Calculator</h1>
-        <p>A Freakonomics-inspired experiment in what data can — and can’t — tell us about wine value.</p>
-        <button id="originOpen" class="tag info-trigger" type="button" aria-haspopup="dialog" aria-controls="originModal">Why Freakonomics? ↗</button>
-      </div>
+<main class="wrap">
+  <section class="card hero" id="hero">
+    <div class="brand">
+      <div class="wine-icon">🍷</div><h1>Wine Price Calculator</h1>
+      <p>Two ways to look at the same bottle.</p>
+      <button id="originOpen" class="tag info-trigger" type="button">Why Freakonomics? ↗</button>
+    </div>
+    <div class="model-toggle" role="tablist" aria-label="Pricing model">
+      <button class="model-tab active" id="ashTab" type="button">Ash Model</button>
+      <button class="model-tab" id="ourTab" type="button">Our Model <span style="opacity:.55">Beta</span></button>
+    </div>
+    <div id="modelCaption" class="model-caption">Ash asks: “What did the weather say about this vintage?”</div>
+    <div class="fields">
+      <div class="field our-only"><label for="wine">🏷️ Wine / Producer</label><input id="wine" class="control" type="text" placeholder="e.g., Château Margaux" autocomplete="off"></div>
+      <div class="field"><label for="vintage">📅 Vintage Year</label><input id="vintage" class="control" type="number" placeholder="e.g., 2018" min="1900" max="2026" inputmode="numeric"></div>
+      <div class="field"><label for="grape">🍇 Grape Type</label><select id="grape" class="control"><option value="">Select grape type...</option><option value="pinot noir">Pinot Noir</option><option value="cabernet sauvignon">Cabernet Sauvignon</option><option value="syrah">Syrah</option><option value="malbec">Malbec</option><option value="chardonnay">Chardonnay</option><option value="riesling">Riesling</option></select></div>
+      <div class="field"><label for="location">📍 Winery Location</label><input id="location" class="control" type="text" placeholder="e.g., Napa Valley, Bordeaux, Tuscany" autocomplete="off"></div>
+      <div class="field our-only"><label for="bottle">🍾 Bottle Size</label><select id="bottle" class="control"><option value="750">750 ml</option><option value="375">375 ml</option><option value="1500">1.5 L Magnum</option></select></div>
+      <div class="actions"><button id="calculate" class="btn primary">🧮 Run the Equation</button><button id="reset" class="btn secondary">Reset</button></div>
+    </div>
+  </section>
 
-      <div class="fields">
-        <div class="field"><label for="vintage">📅 Vintage Year</label><input id="vintage" class="control" type="number" placeholder="e.g., 2018" min="1900" max="2026" inputmode="numeric" /></div>
-        <div class="field"><label for="grape">🍇 Grape Type</label><select id="grape" class="control"><option value="">Select grape type...</option><option value="pinot noir">Pinot Noir</option><option value="cabernet sauvignon">Cabernet Sauvignon</option><option value="syrah">Syrah</option><option value="malbec">Malbec</option><option value="chardonnay">Chardonnay</option><option value="riesling">Riesling</option></select></div>
-        <div class="field"><label for="location">📍 Winery Location</label><input id="location" class="control" type="text" placeholder="e.g., Napa Valley, Bordeaux, Tuscany" autocomplete="off" /></div>
-        <div class="actions"><button id="calculate" class="btn primary">🧮 Run the Equation</button><button id="reset" class="btn secondary">Reset</button></div>
-      </div>
-    </section>
+  <section id="result" class="card result" aria-live="polite">
+    <h2 id="resultTitle">What the model sees</h2>
+    <div id="ashBreakdown" class="breakdown">
+      <h3>Ashenfelter climate inputs</h3><div class="breakdown-sub">Simplified regional climate assumptions adjusted by vintage year for this prototype.</div>
+      <div class="metrics"><div class="metric"><b id="winter">—</b><span>Winter Rainfall</span></div><div class="metric"><b id="temp">—</b><span>Growing Season Temp</span></div><div class="metric"><b id="harvest">—</b><span>Harvest Rainfall</span></div></div>
+      <div class="grape-box"><div class="row"><span>Original Bordeaux Equation Score</span><strong id="base">—</strong></div><div class="row"><span>Prototype Grape Adjustment</span><strong id="multiplier">—</strong></div><div id="grapeNote" class="note"></div></div>
+    </div>
 
-    <section id="result" class="card result" aria-live="polite">
-      <h2>What the model sees</h2>
-      <div class="breakdown">
-        <h3>Ashenfelter climate inputs</h3>
-        <div class="breakdown-sub">These are simplified regional climate assumptions adjusted by vintage year for this prototype.</div>
-        <div class="metrics">
-          <div class="metric"><b id="winter">—</b><span>Winter Rainfall</span></div>
-          <div class="metric"><b id="temp">—</b><span>Growing Season Temp</span></div>
-          <div class="metric"><b id="harvest">—</b><span>Harvest Rainfall</span></div>
-        </div>
-        <div class="grape-box">
-          <div class="row"><span>Original Bordeaux Equation Score</span><strong id="base">—</strong></div>
-          <div class="row"><span>Prototype Grape Adjustment</span><strong id="multiplier">—</strong></div>
-          <div id="grapeNote" class="note"></div>
-        </div>
-      </div>
+    <div class="pricebox"><h3 id="priceLabel">Prototype-adjusted value signal</h3><div id="price" class="price">—</div><div id="summary" class="summary"></div><div id="modelNote" class="model-note"></div></div>
 
-      <div class="pricebox">
-        <h3>Prototype-adjusted value signal</h3>
-        <div id="price" class="price">—</div>
-        <div id="summary" class="summary"></div>
-        <div class="model-note">This is a relative model signal, not a quoted bottle price. Producer reputation, appellation, critic scores, scarcity, taxes, retail margin and current demand are not included yet.</div>
-      </div>
+    <div class="why"><h3 id="whyTitle">Why?</h3><div id="whyIntro" class="why-intro"></div><div id="whyClues"></div><div id="verdict" class="verdict"></div></div>
 
-      <div class="formula"><strong>What is original vs. what is ours?</strong><br/>Original idea: winter rainfall + growing-season temperature − harvest rainfall. Prototype extension: apply a grape multiplier and simplified climate assumptions so the interaction works across more regions. The extension is exploratory and should not be attributed to Ashenfelter.</div>
-    </section>
+    <div id="formula" class="formula"><strong>What is original vs. what is ours?</strong><br>Original idea: winter rainfall + growing-season temperature − harvest rainfall. Prototype extension: apply a grape multiplier and simplified climate assumptions so the interaction works across more regions.</div>
+  </section>
 
-    <section class="card regions">
-      <h3>Prototype regions</h3>
-      <p>The original Bordeaux Equation was built for Bordeaux; the regions below are experimental extensions in this prototype.</p>
-      <div class="region-grid"><div>• Napa Valley</div><div>• Bordeaux</div><div>• Burgundy</div><div>• Tuscany</div><div>• Rioja</div><div>• Barossa Valley</div><div>• Mendoza</div><div>• Willamette Valley</div><div>• Champagne</div><div>• Chianti</div><div>• Douro</div><div>• Mosel</div></div>
-    </section>
-    <div class="footer">Built from a question: how much of wine value can data explain before anyone takes a sip?</div>
-  </main>
-  <div id="originModal" class="modal" hidden>
-    <button class="modal-backdrop" type="button" data-modal-close aria-label="Close explanation"></button>
-    <section class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="originTitle" tabindex="-1">
-      <button class="modal-close" type="button" data-modal-close aria-label="Close explanation">×</button>
-      <div class="modal-kicker">THE IDEA BEHIND IT</div>
-      <h2 id="originTitle">Can data predict a great vintage?</h2>
-      <p>This prototype started with economist Orley Ashenfelter’s research on Bordeaux wines. His model found relationships between auction prices, vintage age, and weather conditions such as winter rain, growing-season temperature, and harvest rain.</p>
-      <p>This calculator borrows that idea, then experiments with simplified regional assumptions and grape adjustments.</p>
-      <div class="modal-boundary">It produces a relative value signal — not an actual bottle price, quality rating, or production cost.</div>
-    </section>
-  </div>
+  <section class="card regions"><h3>Prototype regions</h3><p>The original Bordeaux Equation was built for Bordeaux; the regions below are experimental extensions in this prototype.</p><div class="region-grid"><div>• Napa Valley</div><div>• Bordeaux</div><div>• Burgundy</div><div>• Tuscany</div><div>• Rioja</div><div>• Barossa Valley</div><div>• Mendoza</div><div>• Willamette Valley</div><div>• Champagne</div><div>• Chianti</div><div>• Douro</div><div>• Mosel</div></div></section>
+  <div class="footer">Built from a question: how much of wine value can data explain before anyone takes a sip?</div>
+</main>
+
+<div id="originModal" class="modal" hidden><button class="modal-backdrop" type="button" data-modal-close></button><section class="modal-sheet" role="dialog" aria-modal="true" tabindex="-1"><button class="modal-close" type="button" data-modal-close>×</button><div class="modal-kicker">THE IDEA BEHIND IT</div><h2>Can data predict a great vintage?</h2><p>This prototype started with economist Orley Ashenfelter’s research on Bordeaux wines. His model found relationships between auction prices, vintage age, and weather conditions such as winter rain, growing-season temperature, and harvest rain.</p><p>Our newer model asks a different question: what are comparable wines worth in the market, and what makes this bottle different?</p><div class="modal-boundary">Ash Model is a relative signal. Our Model Beta is an experimental fair-value estimate, not a live retail quote, auction result, production cost, or universal “true price.”</div></section></div>
+
 <script>
-  const grapeMultipliers={
-    'pinot noir':{multiplier:1.15,notes:'Prototype adjustment: high-sensitivity, high-value variety'},
-    'cabernet sauvignon':{multiplier:1.10,notes:'Prototype adjustment: robust red with strong market demand'},
-    'malbec':{multiplier:1.00,notes:'Prototype baseline for Mendoza'},
-    'chardonnay':{multiplier:.95,notes:'Prototype adjustment for a broadly supplied white variety'},
-    'riesling':{multiplier:.93,notes:'Prototype adjustment for a niche, quality-driven variety'},
-    'syrah':{multiplier:1.05,notes:'Prototype adjustment for a popular warm-climate red'}
-  };
-  const regionalPatterns={
-    'napa valley':{winterRainfall:600,avgGrowingTemp:20.5,harvestRainfall:25},
-    'bordeaux':{winterRainfall:800,avgGrowingTemp:18.2,harvestRainfall:85},
-    'burgundy':{winterRainfall:650,avgGrowingTemp:17.8,harvestRainfall:75},
-    'tuscany':{winterRainfall:700,avgGrowingTemp:21.3,harvestRainfall:45},
-    'rioja':{winterRainfall:450,avgGrowingTemp:19.1,harvestRainfall:55},
-    'barossa valley':{winterRainfall:350,avgGrowingTemp:22.1,harvestRainfall:15},
-    'mendoza':{winterRainfall:200,avgGrowingTemp:19.5,harvestRainfall:35},
-    'willamette valley':{winterRainfall:1200,avgGrowingTemp:17.5,harvestRainfall:150},
-    'champagne':{winterRainfall:600,avgGrowingTemp:16.2,harvestRainfall:65},
-    'chianti':{winterRainfall:750,avgGrowingTemp:20.8,harvestRainfall:50},
-    'douro':{winterRainfall:1100,avgGrowingTemp:22.5,harvestRainfall:25},
-    'mosel':{winterRainfall:700,avgGrowingTemp:15.8,harvestRainfall:80}
-  };
-  const $=id=>document.getElementById(id);
-  const getWeatherVariation=(baseValue,vintage)=>{const currentYear=new Date().getFullYear();const yearDiff=currentYear-parseInt(vintage,10);const randomFactor=(Math.sin(parseInt(vintage,10)*.1)*.15)+1;return baseValue*randomFactor*(1+(yearDiff*.002));};
-  function calculate(){
-    const vintage=$('vintage').value.trim(),location=$('location').value.trim(),grape=$('grape').value;
-    if(!vintage||!location||!grape){alert('Please enter vintage year, winery location, and grape type');return;}
-    const y=Number(vintage); if(!Number.isFinite(y)||y<1900||y>new Date().getFullYear()){alert('Please enter a valid vintage year');return;}
-    const locationKey=location.toLowerCase(); let baseWeather=null;
-    for(const region in regionalPatterns){if(locationKey.includes(region)||region.includes(locationKey)){baseWeather=regionalPatterns[region];break;}}
-    if(!baseWeather) baseWeather={winterRainfall:600,avgGrowingTemp:19,harvestRainfall:60};
-    const winterRainfall=getWeatherVariation(baseWeather.winterRainfall,vintage);
-    const avgGrowingTemp=getWeatherVariation(baseWeather.avgGrowingTemp,vintage);
-    const harvestRainfall=getWeatherVariation(baseWeather.harvestRainfall,vintage);
-    const gm=grapeMultipliers[grape]||{multiplier:1,notes:'Prototype standard-variety adjustment'};
-    const bordeauxScore=12.145+(.00117*winterRainfall)+(.0614*avgGrowingTemp)-(.00386*harvestRainfall);
-    const adjustedSignal=bordeauxScore*gm.multiplier;
-    $('winter').textContent=winterRainfall.toFixed(1)+'mm';
-    $('temp').textContent=avgGrowingTemp.toFixed(1)+'°C';
-    $('harvest').textContent=harvestRainfall.toFixed(1)+'mm';
-    $('base').textContent=bordeauxScore.toFixed(2);
-    $('multiplier').textContent='×'+gm.multiplier.toFixed(2);
-    $('grapeNote').textContent=gm.notes;
-    $('price').textContent=adjustedSignal.toFixed(2);
-    $('summary').textContent=vintage+' '+grape+' from '+location;
-    $('result').classList.add('show');
-    setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),30);
-  }
-  function reset(){['vintage','location'].forEach(id=>$(id).value='');$('grape').value='';$('result').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});}
-  const originModal=$('originModal');
-  const modalSheet=originModal.querySelector('.modal-sheet');
-  function openOrigin(){originModal.hidden=false;document.body.classList.add('modal-open');modalSheet.focus();}
-  function closeOrigin(){originModal.hidden=true;document.body.classList.remove('modal-open');$('originOpen').focus();}
-  $('originOpen').addEventListener('click',openOrigin);
-  originModal.querySelectorAll('[data-modal-close]').forEach(el=>el.addEventListener('click',closeOrigin));
-  $('calculate').addEventListener('click',calculate);
-  $('reset').addEventListener('click',reset);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!originModal.hidden){closeOrigin();return;}if(e.key==='Enter'&&!e.shiftKey&&originModal.hidden&&e.target.id!=='originOpen')calculate();});
+const grapeMultipliers={
+ 'pinot noir':{multiplier:1.15,notes:'Prototype adjustment: high-sensitivity, high-value variety'},
+ 'cabernet sauvignon':{multiplier:1.10,notes:'Prototype adjustment: robust red with strong market demand'},
+ 'malbec':{multiplier:1.00,notes:'Prototype baseline for Mendoza'},
+ 'chardonnay':{multiplier:.95,notes:'Prototype adjustment for a broadly supplied white variety'},
+ 'riesling':{multiplier:.93,notes:'Prototype adjustment for a niche, quality-driven variety'},
+ 'syrah':{multiplier:1.05,notes:'Prototype adjustment for a popular warm-climate red'}
+};
+const regionalPatterns={
+ 'napa valley':{winterRainfall:600,avgGrowingTemp:20.5,harvestRainfall:25,anchor:95},
+ 'bordeaux':{winterRainfall:800,avgGrowingTemp:18.2,harvestRainfall:85,anchor:70},
+ 'burgundy':{winterRainfall:650,avgGrowingTemp:17.8,harvestRainfall:75,anchor:85},
+ 'tuscany':{winterRainfall:700,avgGrowingTemp:21.3,harvestRainfall:45,anchor:45},
+ 'rioja':{winterRainfall:450,avgGrowingTemp:19.1,harvestRainfall:55,anchor:35},
+ 'barossa valley':{winterRainfall:350,avgGrowingTemp:22.1,harvestRainfall:15,anchor:45},
+ 'mendoza':{winterRainfall:200,avgGrowingTemp:19.5,harvestRainfall:35,anchor:30},
+ 'willamette valley':{winterRainfall:1200,avgGrowingTemp:17.5,harvestRainfall:150,anchor:45},
+ 'champagne':{winterRainfall:600,avgGrowingTemp:16.2,harvestRainfall:65,anchor:75},
+ 'chianti':{winterRainfall:750,avgGrowingTemp:20.8,harvestRainfall:50,anchor:32},
+ 'douro':{winterRainfall:1100,avgGrowingTemp:22.5,harvestRainfall:25,anchor:40},
+ 'mosel':{winterRainfall:700,avgGrowingTemp:15.8,harvestRainfall:80,anchor:38}
+};
+const $=id=>document.getElementById(id); let mode='ash';
+const getWeatherVariation=(baseValue,vintage)=>{const currentYear=new Date().getFullYear();const yearDiff=currentYear-parseInt(vintage,10);const randomFactor=(Math.sin(parseInt(vintage,10)*.1)*.15)+1;return baseValue*randomFactor*(1+(yearDiff*.002));};
+function getRegion(location){const key=location.toLowerCase();for(const region in regionalPatterns){if(key.includes(region)||region.includes(key))return {name:region,...regionalPatterns[region]};}return {name:'other region',winterRainfall:600,avgGrowingTemp:19,harvestRainfall:60,anchor:40};}
+function clue(icon,q,a,dir=''){return `<div class="clue"><div class="clue-icon">${icon}</div><div><div class="clue-q">${q}</div><div class="clue-a">${a}</div></div><div class="clue-dir">${dir}</div></div>`}
+function setMode(next){
+ mode=next;$('hero').classList.toggle('our-mode',mode==='our');$('ashTab').classList.toggle('active',mode==='ash');$('ourTab').classList.toggle('active',mode==='our');
+ $('modelCaption').textContent=mode==='ash'?'Ash asks: “What did the weather say about this vintage?”':'Our model asks: “What are similar wines worth — and what makes this bottle different?”';
+ $('calculate').textContent=mode==='ash'?'🧮 Run the Equation':'🍷 Estimate Fair Value';$('result').classList.remove('show');
+}
+function validate(){
+ const vintage=$('vintage').value.trim(),location=$('location').value.trim(),grape=$('grape').value;
+ if(!vintage||!location||!grape){alert('Please enter vintage year, winery location, and grape type');return null}
+ if(mode==='our'&&!$('wine').value.trim()){alert('Please enter the wine or producer name');return null}
+ const y=Number(vintage);if(!Number.isFinite(y)||y<1900||y>new Date().getFullYear()){alert('Please enter a valid vintage year');return null}
+ return {vintage,location,grape,y,region:getRegion(location)}
+}
+function calculateAsh(v){
+ const {vintage,location,grape,region}=v; const winter=getWeatherVariation(region.winterRainfall,vintage),temp=getWeatherVariation(region.avgGrowingTemp,vintage),harvest=getWeatherVariation(region.harvestRainfall,vintage),gm=grapeMultipliers[grape]||{multiplier:1,notes:'Prototype standard-variety adjustment'};
+ const score=12.145+(.00117*winter)+(.0614*temp)-(.00386*harvest),adjusted=score*gm.multiplier;
+ $('ashBreakdown').style.display='block';$('winter').textContent=winter.toFixed(1)+'mm';$('temp').textContent=temp.toFixed(1)+'°C';$('harvest').textContent=harvest.toFixed(1)+'mm';$('base').textContent=score.toFixed(2);$('multiplier').textContent='×'+gm.multiplier.toFixed(2);$('grapeNote').textContent=gm.notes;
+ $('resultTitle').textContent='What Ash sees';$('priceLabel').textContent='Prototype-adjusted value signal';$('price').textContent=adjusted.toFixed(2);$('summary').textContent=vintage+' '+grape+' from '+location;
+ $('modelNote').textContent='A relative climate-based signal — not a quoted bottle price.';
+ $('whyTitle').textContent='Why this score?';$('whyIntro').textContent='Ash mostly asks three weather questions.';
+ $('whyClues').innerHTML=clue('☀️','Was it warm while the grapes grew?',temp.toFixed(1)+'°C growing-season temperature',temp>19?'↑':'→')+clue('🌧️','How wet was winter?',winter.toFixed(0)+'mm winter rain','→')+clue('🍂','Did harvest stay relatively dry?',harvest.toFixed(0)+'mm harvest rain',harvest<70?'↑':'↓')+clue('🍇','What grape is it?',grape+' gets a prototype ×'+gm.multiplier.toFixed(2)+' adjustment',gm.multiplier>1?'↑':gm.multiplier<1?'↓':'→');
+ $('verdict').textContent='Ash says: “Tell me the weather and the grape, and I’ll give you a vintage value signal.”';
+ $('formula').style.display='block';
+}
+function calculateOur(v){
+ const {vintage,location,grape,y,region}=v,gm=grapeMultipliers[grape]||{multiplier:1};
+ const age=Math.max(0,new Date().getFullYear()-y),weather=getWeatherVariation(region.avgGrowingTemp,vintage),harvest=getWeatherVariation(region.harvestRainfall,vintage);
+ const weatherFactor=Math.max(.88,Math.min(1.12,1+(weather-19)*.025-(harvest-60)*.0008));
+ const ageFactor=Math.max(.9,Math.min(1.28,1+Math.min(age,25)*.012));
+ const bottle=Number($('bottle').value||750),bottleFactor=bottle/750;
+ const midpoint=region.anchor*gm.multiplier*weatherFactor*ageFactor*bottleFactor;
+ const low=Math.max(8,midpoint*.82),high=midpoint*1.18;
+ $('ashBreakdown').style.display='none';$('resultTitle').textContent='What our model sees';$('priceLabel').textContent='Estimated retail fair-value range · Beta';$('price').textContent='$'+Math.round(low)+'–$'+Math.round(high);$('summary').textContent=$('wine').value.trim()+' · '+vintage+' · '+location+' · '+bottle+'ml';
+ $('modelNote').textContent='Experimental estimate only. Live retail comparables, critic scores, producer reputation and scarcity are not connected yet, so this is not a current market quote.';
+ $('whyTitle').textContent='Why this price?';$('whyIntro').textContent='Our model starts with the neighborhood, then asks what makes this bottle different.';
+ $('whyClues').innerHTML=clue('🍷','What do wines from this neighborhood usually cost?',location+' starts the estimate near a regional reference point','→')+clue('📅','Is this bottle younger or older?',age+' years since vintage',age>8?'↑':'→')+clue('☀️','Did the grapes get helpful weather?',weather.toFixed(1)+'°C growing season, '+harvest.toFixed(0)+'mm harvest rain',weatherFactor>1.02?'↑':weatherFactor<.98?'↓':'→')+clue('🍇','Does the grape usually sit higher or lower?',grape+' adjustment ×'+gm.multiplier.toFixed(2),gm.multiplier>1?'↑':gm.multiplier<1?'↓':'→')+clue('🏰','What about the producer, scores and scarcity?','Not connected yet — these should become extra evidence, not guesses','…');
+ $('verdict').textContent='Our model says: “Start with similar wines, then adjust for why this bottle deserves to be higher or lower.”';
+ $('formula').style.display='none';
+}
+function calculate(){const v=validate();if(!v)return;mode==='ash'?calculateAsh(v):calculateOur(v);$('result').classList.add('show');setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),30)}
+function reset(){['vintage','location','wine'].forEach(id=>$(id).value='');$('grape').value='';$('bottle').value='750';$('result').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'})}
+const modal=$('originModal');function openOrigin(){modal.hidden=false;document.body.style.overflow='hidden'}function closeOrigin(){modal.hidden=true;document.body.style.overflow=''}
+$('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[data-modal-close]').forEach(el=>el.addEventListener('click',closeOrigin));$('calculate').addEventListener('click',calculate);$('reset').addEventListener('click',reset);$('ashTab').addEventListener('click',()=>setMode('ash'));$('ourTab').addEventListener('click',()=>setMode('our'));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeOrigin();if(e.key==='Enter'&&modal.hidden&&e.target.tagName!=='BUTTON')calculate()});
 </script>
-</body>
-</html>
+</body></html>
