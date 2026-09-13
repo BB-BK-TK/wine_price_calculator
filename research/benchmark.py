@@ -26,9 +26,7 @@ def clean(df):
     df = df.copy()
     df = df[df["price"].notna() & (df["price"] > 0)].copy()
     df["vintage"] = df["title"].map(parse_vintage)
-    # Exact duplicate review/listing rows create severe leakage.
     df = df.drop_duplicates(subset=["title", "price", "points", "winery", "variety", "province", "region_1"])
-    # Very extreme entries can dominate RMSE and are not representative of ordinary retail replacement value.
     lo, hi = df["price"].quantile([0.005, 0.995])
     df = df[df["price"].between(lo, hi)].copy()
     return df
@@ -46,18 +44,44 @@ def metrics(y, pred):
 
 def segment_median(train, test):
     global_med = float(train.price.median())
-    levels = [
-        ["country", "province", "variety"],
-        ["country", "variety"],
-        ["country"],
-    ]
+    levels = [["country", "province", "variety"], ["country", "variety"], ["country"]]
     pred = pd.Series(np.nan, index=test.index, dtype=float)
     for cols in levels:
-        med = train.groupby(cols, dropna=False).price.median()
         keys = pd.MultiIndex.from_frame(test[cols].fillna("__NA__"))
         med2 = train.assign(**{c: train[c].fillna("__NA__") for c in cols}).groupby(cols).price.median()
         vals = med2.reindex(keys).to_numpy()
         pred = pred.fillna(pd.Series(vals, index=test.index))
+    return pred.fillna(global_med).to_numpy()
+
+
+def comparable_binned_median(train, test):
+    """Comparable-first baseline using structured peer cells with hierarchical fallback."""
+    tr = train.copy()
+    te = test.copy()
+    tr["points_bin"] = (tr["points"] // 2 * 2).astype("Int64")
+    te["points_bin"] = (te["points"] // 2 * 2).astype("Int64")
+    tr["vintage_bin"] = (tr["vintage"] // 5 * 5).astype("Int64")
+    te["vintage_bin"] = (te["vintage"] // 5 * 5).astype("Int64")
+
+    global_med = float(tr.price.median())
+    levels = [
+        ["country", "province", "region_1", "variety", "points_bin", "vintage_bin"],
+        ["country", "province", "variety", "points_bin", "vintage_bin"],
+        ["country", "province", "variety", "points_bin"],
+        ["country", "province", "variety"],
+        ["country", "variety", "points_bin"],
+        ["country", "variety"],
+        ["country"],
+    ]
+
+    pred = pd.Series(np.nan, index=te.index, dtype=float)
+    for cols in levels:
+        tr_keyed = tr.assign(**{c: tr[c].astype("string").fillna("__NA__") for c in cols})
+        te_keyed = te.assign(**{c: te[c].astype("string").fillna("__NA__") for c in cols})
+        med = tr_keyed.groupby(cols, dropna=False).price.median()
+        keys = pd.MultiIndex.from_frame(te_keyed[cols])
+        vals = med.reindex(keys).to_numpy()
+        pred = pred.fillna(pd.Series(vals, index=te.index))
     return pred.fillna(global_med).to_numpy()
 
 
@@ -85,6 +109,7 @@ def evaluate_split(name, train, test):
     out["B1_segment_median"] = metrics(test.price.to_numpy(), segment_median(train, test))
     out["B2_hedonic_no_producer"] = metrics(test.price.to_numpy(), fit_predict(train, test, False))
     out["B3_hedonic_plus_producer"] = metrics(test.price.to_numpy(), fit_predict(train, test, True))
+    out["B4_comparable_binned_median"] = metrics(test.price.to_numpy(), comparable_binned_median(train, test))
     return out
 
 
@@ -93,17 +118,14 @@ def main():
     d = clean(raw)
     rng = np.random.default_rng(RANDOM_STATE)
 
-    # Standard random holdout (optimistic; included only as a familiar baseline).
     mask = rng.random(len(d)) < 0.2
     random_test = d.loc[mask]
     random_train = d.loc[~mask]
 
-    # Producer holdout: unseen wineries in test. Stronger generalisation test.
     gss = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=RANDOM_STATE)
     tr_idx, te_idx = next(gss.split(d, groups=d["winery"].fillna("__NA__")))
     producer_train, producer_test = d.iloc[tr_idx], d.iloc[te_idx]
 
-    # Vintage-forward holdout: tests newer vintages, but is NOT a true market-time split because review/listing date is absent.
     vint = d["vintage"].dropna()
     cutoff = float(vint.quantile(0.8))
     forward_train = d[(d.vintage.notna()) & (d.vintage < cutoff)]
@@ -120,6 +142,7 @@ def main():
                 "Bottle format is not reliably structured; residual size/format contamination may remain.",
                 "Vintage-forward split is not a market-time split.",
                 "Producer holdout intentionally removes same-winery memorisation and is expected to be harder.",
+                "B4 comparables are structured peer cells, not live exact-wine merchant/transaction comparables.",
             ],
         },
         "random_holdout": evaluate_split("random_holdout", random_train, random_test),
