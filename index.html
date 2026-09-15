@@ -32,6 +32,18 @@
     .regions{margin-top:16px;padding:22px}.regions h3{margin:0 0 5px;font-size:16px}.regions p{font-size:11px;color:rgba(255,255,255,.48);margin:0 0 12px;line-height:1.45}.region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;color:var(--muted);font-size:12px}.footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.42);font-size:11px;line-height:1.5}
     .info-trigger{font:inherit;cursor:pointer}.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}.modal-backdrop{position:absolute;inset:0;border:0;background:rgba(14,4,10,.72);backdrop-filter:blur(7px);width:100%;height:100%}.modal-sheet{position:relative;width:min(560px,100%);max-height:78vh;overflow:auto;padding:30px;border:1px solid rgba(255,255,255,.18);border-radius:26px;background:linear-gradient(145deg,#3a1428,#5b2024 72%,#62301d);box-shadow:0 28px 90px rgba(8,2,6,.55)}.modal-close{position:absolute;top:15px;right:15px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.09);color:#fff;font-size:20px}.modal-kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:1.5px}.modal h2{margin:10px 42px 16px 0;font-size:27px}.modal p{color:var(--muted);font-size:14px;line-height:1.65}.modal-boundary{margin-top:18px;padding:15px;border-radius:15px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);color:#ffe5ad;font-size:12px;line-height:1.55}
     @media(max-width:560px){body{padding:12px 10px 32px}.hero{padding:24px 18px}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:44px}.regions{padding:19px 18px}.modal{place-items:end center;padding:0}.modal-sheet{width:100%;max-height:82vh;padding:27px 22px 24px;border-radius:24px 24px 0 0}}
+  /* Wine Match · playful name-stroke compatibility module */
+    .match-card{margin-top:16px;padding:26px;overflow:hidden}.match-head{text-align:center}.match-kicker{font-size:10px;font-weight:850;letter-spacing:1.5px;color:var(--gold)}.match-head h2{margin:7px 0 7px;font-size:27px;letter-spacing:-.6px}.match-head p{margin:0 auto;max-width:540px;color:var(--muted);font-size:12px;line-height:1.55}
+    .match-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:20px;padding:4px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.14)}.match-tab{border:0;border-radius:12px;padding:11px 8px;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:850;cursor:pointer}.match-tab.active{color:#fff;background:rgba(255,255,255,.13)}
+    .match-panel{margin-top:18px}.match-panel[hidden]{display:none}.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.match-field label{display:block;margin-bottom:7px;font-size:12px;font-weight:800}.match-select{width:100%;border:1px solid rgba(255,255,255,.2);border-radius:14px;background:rgba(255,255,255,.09);color:#fff;padding:13px 12px;font:inherit;font-size:14px;outline:none}.match-select option{background:#321725;color:#fff}.match-select:focus{border-color:rgba(246,199,104,.78);box-shadow:0 0 0 3px rgba(246,199,104,.12)}
+    .match-action{width:100%;margin-top:12px;border:0;border-radius:15px;padding:14px 16px;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#38170c;font:inherit;font-weight:900;cursor:pointer}.match-action:active{transform:scale(.99)}
+    .match-stage{display:none;margin-top:16px;padding:18px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.055)}.match-stage.show{display:block;animation:up .25s ease-out}.shortcut-note{display:none;text-align:center;padding:15px;border-radius:15px;background:rgba(246,199,104,.08);border:1px solid rgba(246,199,104,.2)}.shortcut-note.show{display:block}.shortcut-copy{font-size:12px;color:var(--muted);line-height:1.45}.shortcut-copy strong{display:block;color:#fff;font-size:14px;margin-top:2px}.shortcut-swap{display:flex;justify-content:center;align-items:center;gap:9px;margin-top:10px;font-weight:850}.shortcut-old{color:rgba(255,255,255,.52);text-decoration:line-through}.shortcut-new{color:#ffe19d;font-size:18px}
+    .mix-stage{display:none;margin-top:16px;text-align:center}.mix-stage.show{display:block;animation:up .25s ease-out}.match-step{font-size:10px;font-weight:850;letter-spacing:1px;color:rgba(255,255,255,.5)}.match-letter-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:11px}.match-letter{min-width:35px;height:38px;padding:0 8px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);font-weight:850;background:rgba(255,255,255,.08)}.match-letter.wine{background:rgba(246,199,104,.11);border-color:rgba(246,199,104,.22)}.match-letter.food{background:rgba(168,213,255,.09);border-color:rgba(168,213,255,.18)}
+    .calc-stage{display:none;margin-top:16px;padding-top:15px;border-top:1px solid rgba(255,255,255,.09)}.calc-stage.show{display:block}.compat-triangle{margin-top:12px;display:grid;gap:7px;overflow:hidden}.compat-row{display:flex;justify-content:center;gap:6px;opacity:0;transform:translateY(-5px);transition:opacity .22s ease,transform .22s ease}.compat-row.show{opacity:1;transform:none}.compat-num{min-width:31px;height:31px;padding:0 6px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:850;font-variant-numeric:tabular-nums}.compat-row:last-child .compat-num{background:rgba(246,199,104,.12);border-color:rgba(246,199,104,.28);color:#ffe19d;font-size:15px}
+    .match-result{display:none;margin-top:18px;text-align:center}.match-result.show{display:block;animation:up .28s ease-out}.match-result-label{font-size:11px;color:var(--muted)}.match-score{margin-top:3px;color:var(--gold);font-weight:950;font-size:58px;line-height:1;letter-spacing:-3px}.match-score small{font-size:22px;letter-spacing:0}.match-verdict{margin-top:7px;font-size:17px;font-weight:850}.match-disclaimer{margin-top:5px;font-size:10.5px;color:rgba(255,255,255,.48);line-height:1.45}.match-secondary{margin-top:13px;width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;font:inherit;font-weight:800;cursor:pointer}
+    .destiny-note{margin:0 0 12px;color:var(--muted);font-size:11px;text-align:center}.destiny-list{display:grid;gap:9px;margin-top:14px}.destiny-item{width:100%;display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;text-align:left;border:1px solid rgba(255,255,255,.11);border-radius:15px;padding:11px 12px;background:rgba(255,255,255,.055);color:#fff;font:inherit;cursor:pointer}.destiny-item:hover{background:rgba(255,255,255,.08)}.destiny-rank{font-size:18px;text-align:center}.destiny-food{font-size:13px;font-weight:850}.destiny-copy{font-size:10px;color:var(--muted);margin-top:1px}.destiny-score{font-size:20px;font-weight:950;color:#ffe19d}.destiny-alias{display:none;margin-top:12px;text-align:center;color:rgba(255,255,255,.52);font-size:10.5px}.destiny-alias.show{display:block}
+    @media(prefers-reduced-motion:reduce){.compat-row{transition:none}.match-stage.show,.mix-stage.show,.match-result.show{animation:none}}
+    @media(max-width:560px){.match-card{padding:22px 16px}.match-grid{grid-template-columns:1fr}.match-score{font-size:52px}}
   </style>
 </head>
 <body>
@@ -70,6 +82,55 @@
     <div class="why"><h3 id="whyTitle">Why?</h3><div id="whyIntro" class="why-intro"></div><div id="whyClues"></div><div id="verdict" class="verdict"></div></div>
 
     <div id="formula" class="formula"><strong>What is original vs. what is ours?</strong><br>Original idea: winter rainfall + growing-season temperature − harvest rainfall. Prototype extension: apply a grape multiplier and simplified climate assumptions so the interaction works across more regions.</div>
+  </section>
+
+<section class="card match-card" id="matchModule">
+    <div class="match-head">
+      <div class="match-kicker">WINE MATCH · JUST FOR FUN</div>
+      <h2>🍷 와인 궁합</h2>
+      <p>와인 품종과 메뉴 이름을 옛날 이름궁합처럼 섞어봐요. 실제 페어링 지식은 점수에 전혀 들어가지 않습니다.</p>
+    </div>
+    <div class="match-tabs" role="tablist" aria-label="와인 궁합 모드">
+      <button id="matchPairTab" class="match-tab active" type="button" role="tab" aria-selected="true">궁합 보기</button>
+      <button id="matchDestinyTab" class="match-tab" type="button" role="tab" aria-selected="false">운명 찾기</button>
+    </div>
+
+    <div id="matchPairPanel" class="match-panel" role="tabpanel">
+      <div class="match-grid">
+        <div class="match-field"><label for="matchGrape">🍇 포도 품종</label><select id="matchGrape" class="match-select"><option>소비뇽블랑</option><option>샤르도네</option><option>피노누아</option><option>카베르네소비뇽</option><option>리슬링</option><option>말벡</option><option>메를로</option><option>시라</option><option>진판델</option><option>모스카토</option></select></div>
+        <div class="match-field"><label for="matchFood">🍽️ 메뉴</label><select id="matchFood" class="match-select"><option>생선구이</option><option>삼겹살</option><option>치킨</option><option>피자</option><option>생선회</option><option>스테이크</option><option>떡볶이</option><option>파스타</option><option>김치찌개</option><option>초밥</option><option>치즈</option><option>양갈비</option></select></div>
+      </div>
+      <button id="matchRun" class="match-action" type="button">💘 두근두근 궁합 보기</button>
+
+      <div id="matchStage" class="match-stage" aria-live="polite">
+        <div id="shortcutNote" class="shortcut-note">
+          <div class="shortcut-copy">이름이 조금 길어서,<strong>이번엔 줄임말로 가볼게요!</strong></div>
+          <div class="shortcut-swap"><span id="shortcutOld" class="shortcut-old"></span><span>→</span><span id="shortcutNew" class="shortcut-new"></span></div>
+        </div>
+        <div id="mixStage" class="mix-stage">
+          <div class="match-step">STEP 1 · 두 이름을 골고루 섞는 중</div>
+          <div id="matchLetters" class="match-letter-row"></div>
+        </div>
+        <div id="calcStage" class="calc-stage">
+          <div class="match-step" style="text-align:center">STEP 2 · 획수로 바꾸고, 옆 숫자끼리 계속 더하기</div>
+          <div id="matchTriangle" class="compat-triangle"></div>
+        </div>
+        <div id="matchResult" class="match-result">
+          <div class="match-result-label">마지막 두 숫자를 붙이면…</div>
+          <div id="matchScore" class="match-score">—<small>%</small></div>
+          <div id="matchVerdict" class="match-verdict"></div>
+          <div class="match-disclaimer">점수는 100% 이름 획수 놀이예요. 산도, 바디, 실제 음식 궁합은 반영하지 않았습니다.</div>
+          <button id="matchToDestiny" class="match-secondary" type="button">이 와인의 운명의 메뉴 찾기 →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="matchDestinyPanel" class="match-panel" role="tabpanel" hidden>
+      <div class="match-field"><label for="destinyGrape">🍇 운명을 찾을 품종</label><select id="destinyGrape" class="match-select"><option>소비뇽블랑</option><option>샤르도네</option><option>피노누아</option><option>카베르네소비뇽</option><option>리슬링</option><option>말벡</option><option>메를로</option><option>시라</option><option>진판델</option><option>모스카토</option></select></div>
+      <p class="destiny-note">메뉴 이름과의 획수 궁합만으로 운명의 상대를 찾아요.</p>
+      <div id="destinyList" class="destiny-list"></div>
+      <div id="destinyAlias" class="destiny-alias"></div>
+    </div>
   </section>
 
   <section class="card regions"><h3>Prototype regions</h3><p>The original Bordeaux Equation was built for Bordeaux; the regions below are experimental extensions in this prototype.</p><div class="region-grid"><div>• Napa Valley</div><div>• Bordeaux</div><div>• Burgundy</div><div>• Tuscany</div><div>• Rioja</div><div>• Barossa Valley</div><div>• Mendoza</div><div>• Willamette Valley</div><div>• Champagne</div><div>• Chianti</div><div>• Douro</div><div>• Mosel</div></div></section>
@@ -145,7 +206,49 @@ function calculateOur(v){
 }
 function calculate(){const v=validate();if(!v)return;mode==='ash'?calculateAsh(v):calculateOur(v);$('result').classList.add('show');setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),30)}
 function reset(){['vintage','location','wine'].forEach(id=>$(id).value='');$('grape').value='';$('bottle').value='750';$('result').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'})}
+/* Wine Match: pure Korean name-stroke compatibility. No pairing knowledge enters the score. */
+const compatAliases={'카베르네소비뇽':'까쇼'};
+const compatFoods=['생선구이','삼겹살','치킨','피자','생선회','스테이크','떡볶이','파스타','김치찌개','초밥','치즈','양갈비'];
+const compatCho=[2,4,2,3,6,5,4,4,8,2,4,1,3,6,4,3,4,4,3];
+const compatJung=[2,3,3,4,2,3,3,4,2,4,5,3,3,2,4,5,3,3,1,2,1];
+const compatJong=[0,2,4,4,2,5,5,3,5,7,9,9,7,9,9,8,4,4,6,2,4,1,3,4,3,4,4,3];
+let compatTimers=[];
+function compatClean(text){return [...text.replace(/\s+/g,'')].filter(ch=>{const n=ch.charCodeAt(0);return n>=0xAC00&&n<=0xD7A3}).join('')}
+function compatStroke(ch){const code=ch.charCodeAt(0);if(code<0xAC00||code>0xD7A3)return 0;const s=code-0xAC00,cho=Math.floor(s/588),jung=Math.floor((s%588)/28),jong=s%28;return compatCho[cho]+compatJung[jung]+compatJong[jong]}
+function compatName(grape){return compatAliases[grape]||grape}
+function compatBalancedMix(a,b){
+ const aa=[...compatClean(a)],bb=[...compatClean(b)];if(!aa.length||!bb.length)return [];
+ const out=[];
+ const chunkSizes=(length,count)=>{const base=Math.floor(length/count),rem=length%count;return Array.from({length:count},(_,i)=>base+(i>=count-rem?1:0))};
+ if(aa.length<=bb.length){let j=0;const sizes=chunkSizes(bb.length,aa.length);aa.forEach((ch,i)=>{out.push({ch,source:'wine'});for(let k=0;k<sizes[i];k++)out.push({ch:bb[j++],source:'food'})})}
+ else{let i=0;const sizes=chunkSizes(aa.length,bb.length+1);sizes.forEach((size,gap)=>{for(let k=0;k<size;k++)out.push({ch:aa[i++],source:'wine'});if(gap<bb.length)out.push({ch:bb[gap],source:'food'})})}
+ return out;
+}
+function compatRows(values){const rows=[values.slice()];let row=values.slice();while(row.length>2){row=row.slice(0,-1).map((v,i)=>(v+row[i+1])%10);rows.push(row)}return rows}
+function compatCalculate(grape,food){const used=compatName(grape),mixed=compatBalancedMix(used,food),values=mixed.map(x=>compatStroke(x.ch)),rows=compatRows(values);const last=rows[rows.length-1]||[0,0],score=((last[0]||0)*10+(last[1]||0));return {grape,used,food,mixed,values,rows,score}}
+function compatVerdict(score){if(score>=90)return '거의 운명인데요? 💘';if(score>=75)return '꽤 잘 맞는 사이 💛';if(score>=55)return '은근히 가능성 있어요 👀';if(score>=30)return '친구로는 괜찮을지도 🙂';return '각자의 길을 추천합니다 💔'}
+function compatCopy(score){if(score>=90)return '둘이 왜 이제 만났죠?';if(score>=75)return '오늘 저녁 같이 앉혀도 됩니다.';if(score>=55)return '조금 더 알아가 볼까요?';if(score>=30)return '아직은 썸 타는 중.';return '와인은 잘못이 없습니다.'}
+function compatClearTimers(){compatTimers.forEach(clearTimeout);compatTimers=[]}
+function compatSwitch(tab){const pair=tab==='pair';$('matchPairPanel').hidden=!pair;$('matchDestinyPanel').hidden=pair;$('matchPairTab').classList.toggle('active',pair);$('matchDestinyTab').classList.toggle('active',!pair);$('matchPairTab').setAttribute('aria-selected',String(pair));$('matchDestinyTab').setAttribute('aria-selected',String(!pair));if(!pair)compatRenderDestiny()}
+function compatRenderLetters(calc){$('matchLetters').innerHTML='';calc.mixed.forEach(item=>{const el=document.createElement('span');el.className='match-letter '+item.source;el.textContent=item.ch;$('matchLetters').appendChild(el)})}
+function compatBuildTriangle(calc){$('matchTriangle').innerHTML='';calc.rows.forEach(row=>{const line=document.createElement('div');line.className='compat-row';row.forEach(n=>{const el=document.createElement('span');el.className='compat-num';el.textContent=n;line.appendChild(el)});$('matchTriangle').appendChild(line)})}
+function compatRun(){
+ compatClearTimers();const grape=$('matchGrape').value,food=$('matchFood').value,calc=compatCalculate(grape,food),alias=calc.used!==grape,reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ $('matchStage').classList.add('show');$('shortcutNote').classList.toggle('show',alias);$('mixStage').classList.remove('show');$('calcStage').classList.remove('show');$('matchResult').classList.remove('show');
+ if(alias){$('shortcutOld').textContent=grape;$('shortcutNew').textContent=calc.used}
+ compatRenderLetters(calc);compatBuildTriangle(calc);
+ const startMix=alias&&!reduced?650:80,step=reduced?0:190;
+ compatTimers.push(setTimeout(()=>{$('mixStage').classList.add('show')},startMix));
+ compatTimers.push(setTimeout(()=>{$('calcStage').classList.add('show');const rows=[...$('matchTriangle').querySelectorAll('.compat-row')];rows.forEach((row,i)=>compatTimers.push(setTimeout(()=>row.classList.add('show'),i*step)));const finish=(rows.length-1)*step+(reduced?0:300);compatTimers.push(setTimeout(()=>{$('matchScore').innerHTML=String(calc.score).padStart(2,'0')+'<small>%</small>';$('matchVerdict').textContent=compatVerdict(calc.score);$('matchResult').classList.add('show')},finish))},startMix+(reduced?0:420)));
+}
+function compatRenderDestiny(){
+ const grape=$('destinyGrape').value,ranking=compatFoods.map(food=>compatCalculate(grape,food)).sort((a,b)=>b.score-a.score||a.food.localeCompare(b.food,'ko')).slice(0,5),list=$('destinyList');list.innerHTML='';
+ ranking.forEach((item,i)=>{const b=document.createElement('button');b.type='button';b.className='destiny-item';b.innerHTML=`<span class="destiny-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span><span><span class="destiny-food">${item.food}</span><span class="destiny-copy">${compatCopy(item.score)}</span></span><span class="destiny-score">${String(item.score).padStart(2,'0')}%</span>`;b.addEventListener('click',()=>{$('matchGrape').value=grape;$('matchFood').value=item.food;compatSwitch('pair');compatRun();setTimeout(()=>$('matchStage').scrollIntoView({behavior:'smooth',block:'center'}),50)});list.appendChild(b)});
+ const alias=compatAliases[grape];$('destinyAlias').classList.toggle('show',Boolean(alias));$('destinyAlias').textContent=alias?`이름이 길어서 ${grape}은(는) “${alias}”로 계산했어요.`:'';
+}
+$('matchPairTab').addEventListener('click',()=>compatSwitch('pair'));$('matchDestinyTab').addEventListener('click',()=>compatSwitch('destiny'));$('matchRun').addEventListener('click',compatRun);$('destinyGrape').addEventListener('change',compatRenderDestiny);$('matchToDestiny').addEventListener('click',()=>{$('destinyGrape').value=$('matchGrape').value;compatSwitch('destiny');setTimeout(()=>$('matchModule').scrollIntoView({behavior:'smooth',block:'start'}),30)});compatRenderDestiny();
+
 const modal=$('originModal');function openOrigin(){modal.hidden=false;document.body.style.overflow='hidden'}function closeOrigin(){modal.hidden=true;document.body.style.overflow=''}
-$('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[data-modal-close]').forEach(el=>el.addEventListener('click',closeOrigin));$('calculate').addEventListener('click',calculate);$('reset').addEventListener('click',reset);$('ashTab').addEventListener('click',()=>setMode('ash'));$('ourTab').addEventListener('click',()=>setMode('our'));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeOrigin();if(e.key==='Enter'&&modal.hidden&&e.target.tagName!=='BUTTON')calculate()});
+$('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[data-modal-close]').forEach(el=>el.addEventListener('click',closeOrigin));$('calculate').addEventListener('click',calculate);$('reset').addEventListener('click',reset);$('ashTab').addEventListener('click',()=>setMode('ash'));$('ourTab').addEventListener('click',()=>setMode('our'));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeOrigin();if(e.key==='Enter'&&modal.hidden&&e.target.tagName!=='BUTTON'&&!e.target.closest('#matchModule'))calculate()});
 </script>
 </body></html>
