@@ -3,37 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#3b1024" />
+  <meta name="theme-color" content="#f3eee8" />
   <title>Wine Price Calculator</title>
   <meta name="description" content="A Freakonomics-inspired experiment in what data can — and can’t — tell us about wine value." />
   <style>
-    :root{--text:#fff8f3;--muted:rgba(255,248,243,.72);--line:rgba(255,255,255,.16);--glass:rgba(255,255,255,.10);--glass2:rgba(255,255,255,.065);--gold:#f6c768;--gold2:#e79b3f}
-    *{box-sizing:border-box}html{min-height:100%;background:#331222}
-    body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at 10% 0%,rgba(144,62,102,.58),transparent 34%),radial-gradient(circle at 100% 20%,rgba(190,93,41,.34),transparent 34%),linear-gradient(145deg,#291024 0%,#5a1823 52%,#6d351a 100%);padding:22px 14px 46px}
-    .wrap{width:min(760px,100%);margin:auto}.card{background:var(--glass);border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 70px rgba(12,3,8,.28);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-    .hero{padding:28px}.brand{text-align:center;margin-bottom:24px}.wine-icon{width:62px;height:62px;margin:0 auto 13px;display:grid;place-items:center;border-radius:20px;background:rgba(246,199,104,.14);border:1px solid rgba(246,199,104,.30);font-size:34px}
-    .brand h1{font-size:clamp(32px,7vw,46px);line-height:1.02;margin:0 0 9px;letter-spacing:-1.5px}.brand p{margin:0 auto;color:var(--muted);font-size:15px;max-width:560px;line-height:1.5}
-    .tag{display:inline-flex;align-items:center;gap:6px;margin-top:12px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);border-radius:999px;padding:7px 10px;color:#f8d991;font-size:11px}
-    .model-toggle{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:rgba(0,0,0,.16);border:1px solid var(--line);border-radius:17px;margin:0 0 10px}
-    .model-tab{border:0;background:transparent;color:var(--muted);border-radius:13px;padding:12px 10px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;transition:.18s}
-    .model-tab.active{background:rgba(255,255,255,.14);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.15)}
-    .model-caption{text-align:center;color:rgba(255,255,255,.53);font-size:11px;margin:0 0 22px}.fields{display:grid;gap:20px}
-    .field label{display:flex;gap:8px;align-items:center;font-weight:750;margin:0 0 9px;font-size:15px}.control{width:100%;border-radius:15px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.11);color:white;padding:15px;font:inherit;outline:none;transition:.18s}
-    .control:focus{border-color:rgba(246,199,104,.8);box-shadow:0 0 0 3px rgba(246,199,104,.14)}.control::placeholder{color:rgba(255,255,255,.48)}select.control option{background:#321725;color:#fff}
-    .our-only{display:none}.our-mode .our-only{display:block}.actions{display:grid;grid-template-columns:1fr auto;gap:12px;margin-top:3px}.btn{border:0;border-radius:15px;padding:15px 20px;font:inherit;font-weight:820;cursor:pointer;transition:transform .15s,filter .15s}.btn:active{transform:scale(.985)}
-    .primary{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#38170c;box-shadow:0 12px 30px rgba(231,155,63,.2)}.secondary{background:rgba(255,255,255,.11);color:#fff;border:1px solid var(--line)}
-    .result{display:none;padding:26px;margin-top:16px}.result.show{display:block;animation:up .28s ease-out}@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    .result h2{text-align:center;font-size:24px;margin:0 0 20px}.breakdown{background:var(--glass2);border:1px solid var(--line);border-radius:20px;padding:20px}.breakdown h3{margin:0 0 5px;font-size:18px}.breakdown-sub{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:17px;line-height:1.45}
-    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{text-align:center;padding:11px 4px}.metric b{display:block;font-size:23px;margin-bottom:4px}.metric span{display:block;font-size:11px;color:var(--muted);line-height:1.25}.metric:nth-child(1) b{color:#a8d5ff}.metric:nth-child(2) b{color:#ffc383}.metric:nth-child(3) b{color:#b4e8b6}
-    .grape-box{margin-top:14px;padding:15px;border-radius:15px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10)}.row{display:flex;justify-content:space-between;gap:16px;padding:5px 0;color:var(--muted);font-size:14px}.row strong{color:white}.note{font-size:12px;color:rgba(255,255,255,.56);font-style:italic;margin-top:7px;line-height:1.45}
-    .pricebox{text-align:center;margin-top:18px;border-radius:21px;padding:25px 18px;background:linear-gradient(100deg,rgba(246,199,104,.15),rgba(231,155,63,.12));border:1px solid rgba(246,199,104,.28)}.pricebox h3{font-size:15px;font-weight:650;margin:0 0 6px;color:rgba(255,255,255,.82)}.price{font-size:52px;line-height:1;font-weight:900;letter-spacing:-2px;color:var(--gold)}.summary{margin-top:8px;color:var(--muted);font-size:14px}.model-note{margin:11px auto 0;max-width:560px;color:rgba(255,255,255,.52);font-size:10.5px;line-height:1.45}
-    .why{margin-top:16px;padding:20px;border-radius:20px;background:rgba(255,255,255,.065);border:1px solid var(--line)}.why h3{margin:0 0 4px;font-size:18px}.why-intro{font-size:12px;color:var(--muted);margin-bottom:14px}.clue{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.09)}.clue:first-of-type{border-top:0}.clue-icon{font-size:20px}.clue-q{font-size:13px;font-weight:750}.clue-a{font-size:12px;color:var(--muted);margin-top:2px}.clue-dir{font-weight:900;color:#f8d991}
-    .verdict{margin-top:12px;padding:15px;border-radius:15px;background:rgba(246,199,104,.09);border:1px solid rgba(246,199,104,.2);font-size:13px;line-height:1.55;color:#ffe6b0}.formula{margin-top:16px;padding:14px;border-radius:14px;background:rgba(0,0,0,.10);font-size:11px;line-height:1.6;color:rgba(255,255,255,.58);text-align:left}.formula strong{color:rgba(255,255,255,.82)}
-    .regions{margin-top:16px;padding:22px}.regions h3{margin:0 0 5px;font-size:16px}.regions p{font-size:11px;color:rgba(255,255,255,.48);margin:0 0 12px;line-height:1.45}.region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;color:var(--muted);font-size:12px}.footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.42);font-size:11px;line-height:1.5}
-    .info-trigger{font:inherit;cursor:pointer}.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}.modal-backdrop{position:absolute;inset:0;border:0;background:rgba(14,4,10,.72);backdrop-filter:blur(7px);width:100%;height:100%}.modal-sheet{position:relative;width:min(560px,100%);max-height:78vh;overflow:auto;padding:30px;border:1px solid rgba(255,255,255,.18);border-radius:26px;background:linear-gradient(145deg,#3a1428,#5b2024 72%,#62301d);box-shadow:0 28px 90px rgba(8,2,6,.55)}.modal-close{position:absolute;top:15px;right:15px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.09);color:#fff;font-size:20px}.modal-kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:1.5px}.modal h2{margin:10px 42px 16px 0;font-size:27px}.modal p{color:var(--muted);font-size:14px;line-height:1.65}.modal-boundary{margin-top:18px;padding:15px;border-radius:15px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);color:#ffe5ad;font-size:12px;line-height:1.55}
-    @media(max-width:560px){body{padding:12px 10px 32px}.hero{padding:24px 18px}.actions{grid-template-columns:1fr}.secondary{order:2}.result{padding:20px 16px}.metric b{font-size:20px}.region-grid{grid-template-columns:repeat(2,1fr)}.price{font-size:44px}.regions{padding:19px 18px}.modal{place-items:end center;padding:0}.modal-sheet{width:100%;max-height:82vh;padding:27px 22px 24px;border-radius:24px 24px 0 0}}
-  
-    .match-launch{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin:0 0 18px;padding:14px 15px;border-radius:18px;border:1px solid rgba(246,199,104,.25);background:linear-gradient(100deg,rgba(246,199,104,.10),rgba(243,154,180,.08));color:#fff;text-decoration:none;transition:.18s}.match-launch:hover{background:linear-gradient(100deg,rgba(246,199,104,.15),rgba(243,154,180,.12));transform:translateY(-1px)}.match-launch-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.08);font-size:21px}.match-launch strong{display:block;font-size:14px}.match-launch small{display:block;margin-top:2px;color:var(--muted);font-size:10.5px;line-height:1.35}.match-launch-arrow{color:#ffe2a0;font-size:18px}
+    :root{
+      --paper:#f4efe9;--paper-2:#ebe3da;--surface:#fffdf9;--ink:#211916;--muted:#7a6d67;
+      --line:#ded4ca;--wine:#5b1730;--wine-deep:#35101f;--wine-soft:#f0e2e7;--brass:#a56e2d;
+      --brass-soft:#f3e6d2;--green:#446754;--shadow:0 18px 50px rgba(61,34,25,.10)
+    }
+    *{box-sizing:border-box}
+    html{min-height:100%;background:var(--paper)}
+    body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:
+      radial-gradient(circle at 100% 0%,rgba(91,23,48,.08),transparent 30%),
+      linear-gradient(180deg,#f8f4ef 0%,var(--paper) 48%,#eee7e0 100%);padding:22px 14px 52px}
+    button,input,select{font:inherit}.wrap{width:min(720px,100%);margin:auto}
+    .card{background:rgba(255,253,249,.94);border:1px solid rgba(101,75,64,.15);border-radius:24px;box-shadow:var(--shadow)}
+    .hero{padding:28px}.brand{text-align:left;margin-bottom:26px;position:relative;padding-right:72px}
+    .wine-icon{position:absolute;right:0;top:0;width:54px;height:54px;display:grid;place-items:center;border-radius:50%;background:var(--wine);color:#fff;font-size:0;box-shadow:0 10px 24px rgba(91,23,48,.18)}
+    .wine-icon:after{content:'W';font-family:Georgia,"Times New Roman",serif;font-size:25px;font-style:italic;color:#f7e9d5}
+    .brand h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,8vw,54px);font-weight:500;line-height:.98;margin:0 0 12px;letter-spacing:-2.2px;color:var(--wine-deep)}
+    .brand p{margin:0;color:var(--muted);font-size:14px;line-height:1.55;max-width:480px}
+    .tag{display:inline-flex;align-items:center;gap:5px;margin-top:13px;border:0;border-bottom:1px solid rgba(91,23,48,.28);background:transparent;padding:4px 0;color:var(--wine);font-size:11px;font-weight:750;cursor:pointer}
+    .match-launch{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin:0 0 22px;padding:13px 14px;border-radius:16px;border:1px solid var(--line);background:#faf6f1;color:var(--ink);text-decoration:none;transition:.18s}
+    .match-launch:hover{border-color:#cbb9aa;background:#fffaf4;transform:translateY(-1px)}
+    .match-launch-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--wine-soft);font-size:18px}.match-launch strong{display:block;font-size:13px;color:var(--wine-deep)}.match-launch small{display:block;margin-top:3px;color:var(--muted);font-size:10.5px;line-height:1.35}.match-launch-arrow{color:var(--wine);font-size:17px}
+    .model-toggle{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:#eee7df;border:1px solid #e4d9cf;border-radius:14px;margin:0 0 9px}
+    .model-tab{border:0;background:transparent;color:#84766f;border-radius:10px;padding:11px 10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}
+    .model-tab.active{background:var(--surface);color:var(--wine-deep);box-shadow:0 3px 10px rgba(67,42,32,.08)}
+    .model-caption{text-align:left;color:var(--muted);font-size:11px;margin:0 2px 24px;line-height:1.5}
+    .fields{display:grid;gap:17px}.field label{display:flex;gap:6px;align-items:center;font-weight:800;margin:0 0 8px;font-size:12px;letter-spacing:.01em;color:#4b3d37}
+    .control{width:100%;border-radius:13px;border:1px solid #d9cec4;background:#fffdf9;color:var(--ink);padding:14px 15px;outline:none;transition:.18s;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+    .control:hover{border-color:#c9b9ab}.control:focus{border-color:var(--wine);box-shadow:0 0 0 3px rgba(91,23,48,.09)}.control::placeholder{color:#aa9d96}select.control option{background:#fff;color:#211916}
+    .our-only{display:none}.our-mode .our-only{display:block}.actions{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:5px}.btn{border-radius:13px;padding:14px 19px;font:inherit;font-weight:850;cursor:pointer;transition:transform .15s,filter .15s}.btn:active{transform:scale(.99)}
+    .primary{border:1px solid var(--wine);background:var(--wine);color:#fffaf6;box-shadow:0 10px 24px rgba(91,23,48,.16)}.primary:hover{filter:brightness(.96)}.secondary{background:transparent;color:#6d5f58;border:1px solid #d7cbc2}
+    .result{display:none;padding:0;margin-top:18px;overflow:hidden}.result.show{display:block;animation:up .28s ease-out}@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .result>h2{text-align:left;font-family:Georgia,"Times New Roman",serif;font-size:24px;font-weight:500;margin:0;padding:24px 24px 0;color:var(--wine-deep)}
+    .breakdown{margin:18px 24px 0;background:#faf6f1;border:1px solid var(--line);border-radius:18px;padding:18px}.breakdown h3{margin:0 0 5px;font-size:14px}.breakdown-sub{font-size:10.5px;color:var(--muted);margin-bottom:15px;line-height:1.5}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{text-align:left;padding:11px;border-radius:12px;background:var(--surface);border:1px solid #e8dfd7}.metric b{display:block;font-size:19px;margin-bottom:4px;color:var(--wine-deep);font-variant-numeric:tabular-nums}.metric span{display:block;font-size:9.5px;color:var(--muted);line-height:1.25}.metric:nth-child(1) b,.metric:nth-child(2) b,.metric:nth-child(3) b{color:var(--wine-deep)}
+    .grape-box{margin-top:10px;padding:12px 13px;border-radius:12px;background:transparent;border:1px dashed #d9cdc2}.row{display:flex;justify-content:space-between;gap:16px;padding:4px 0;color:var(--muted);font-size:11.5px}.row strong{color:var(--ink)}.note{font-size:10.5px;color:#8b7d76;margin-top:6px;line-height:1.45}
+    .pricebox{text-align:left;margin-top:0;padding:28px 24px 26px;background:linear-gradient(135deg,var(--wine-deep),var(--wine));border:0;color:#fff}.pricebox h3{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:850;margin:0 0 8px;color:#e6cfd6}.price{font-family:Georgia,"Times New Roman",serif;font-size:clamp(50px,11vw,70px);line-height:.98;font-weight:500;letter-spacing:-2.5px;color:#fff9f2;font-variant-numeric:tabular-nums}.summary{margin-top:10px;color:#eadce0;font-size:12px}.model-note{margin:8px 0 0;max-width:560px;color:#cdb7bf;font-size:9.5px;line-height:1.5}
+    .why{margin:0;padding:24px;background:#fffdf9;border-top:1px solid #e8ddd4}.why h3{margin:0 0 4px;font-family:Georgia,"Times New Roman",serif;font-size:22px;font-weight:500;color:var(--wine-deep)}.why-intro{font-size:11px;color:var(--muted);margin-bottom:11px}.clue{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid #eee6df}.clue:first-of-type{border-top:0}.clue-icon{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#f4ece6;font-size:13px}.clue-q{font-size:11.5px;font-weight:800;color:#493a34}.clue-a{font-size:10.5px;color:var(--muted);margin-top:2px}.clue-dir{font-weight:900;color:var(--brass);font-size:14px}
+    .verdict{margin-top:12px;padding:14px;border-radius:13px;background:var(--brass-soft);border:1px solid #e5cfb0;font-size:11px;line-height:1.55;color:#66451e}.formula{margin:0 24px 24px;padding:13px;border-radius:12px;background:#f8f3ed;border:1px solid #ebe1d8;font-size:10px;line-height:1.55;color:#82736c;text-align:left}.formula strong{color:#554640}
+    .regions{margin-top:16px;padding:20px 22px;box-shadow:none;background:rgba(255,253,249,.6)}.regions h3{margin:0 0 5px;font-size:12px;color:#554741}.regions p{font-size:10px;color:#91837c;margin:0 0 12px;line-height:1.45}.region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px 10px;color:#7e7069;font-size:10.5px}.footer{margin-top:16px;text-align:center;color:#968981;font-size:10px;line-height:1.5}
+    .info-trigger{font:inherit;cursor:pointer}.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}.modal-backdrop{position:absolute;inset:0;border:0;background:rgba(36,22,18,.5);backdrop-filter:blur(5px);width:100%;height:100%}.modal-sheet{position:relative;width:min(540px,100%);max-height:78vh;overflow:auto;padding:30px;border:1px solid #dfd3ca;border-radius:22px;background:#fffdf9;box-shadow:0 28px 90px rgba(36,22,18,.24)}.modal-close{position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:50%;border:1px solid #ded4ca;background:#faf5ef;color:var(--ink);font-size:19px}.modal-kicker{color:var(--wine);font-size:9px;font-weight:850;letter-spacing:1.5px}.modal h2{margin:10px 42px 16px 0;font-family:Georgia,"Times New Roman",serif;font-size:28px;font-weight:500;color:var(--wine-deep)}.modal p{color:var(--muted);font-size:13px;line-height:1.7}.modal-boundary{margin-top:18px;padding:14px;border-radius:13px;border:1px solid #e4d0b3;background:var(--brass-soft);color:#66451e;font-size:11px;line-height:1.55}
+    @media(max-width:560px){body{padding:10px 9px 30px}.hero{padding:22px 16px}.brand{padding-right:56px}.wine-icon{width:45px;height:45px}.wine-icon:after{font-size:21px}.brand h1{font-size:39px}.actions{grid-template-columns:1fr}.secondary{order:2}.result>h2{padding:21px 18px 0}.breakdown{margin:15px 18px 0;padding:15px}.pricebox{padding:24px 18px}.why{padding:22px 18px}.formula{margin:0 18px 20px}.metric b{font-size:17px}.region-grid{grid-template-columns:repeat(2,1fr)}.regions{padding:17px 16px}.modal{place-items:end center;padding:0}.modal-sheet{width:100%;max-height:82vh;padding:27px 22px 24px;border-radius:22px 22px 0 0}}
   </style>
 </head>
 <body>
@@ -55,12 +69,12 @@
     </div>
     <div id="modelCaption" class="model-caption">Ash asks: “What did the weather say about this vintage?”</div>
     <div class="fields">
-      <div class="field our-only"><label for="wine">🏷️ Wine / Producer</label><input id="wine" class="control" type="text" placeholder="e.g., Château Margaux" autocomplete="off"></div>
-      <div class="field"><label for="vintage">📅 Vintage Year</label><input id="vintage" class="control" type="number" placeholder="e.g., 2018" min="1900" max="2026" inputmode="numeric"></div>
-      <div class="field"><label for="grape">🍇 Grape Type</label><select id="grape" class="control"><option value="">Select grape type...</option><option value="pinot noir">Pinot Noir</option><option value="cabernet sauvignon">Cabernet Sauvignon</option><option value="syrah">Syrah</option><option value="malbec">Malbec</option><option value="chardonnay">Chardonnay</option><option value="riesling">Riesling</option></select></div>
-      <div class="field"><label for="location">📍 Winery Location</label><input id="location" class="control" type="text" placeholder="e.g., Napa Valley, Bordeaux, Tuscany" autocomplete="off"></div>
-      <div class="field our-only"><label for="bottle">🍾 Bottle Size</label><select id="bottle" class="control"><option value="750">750 ml</option><option value="375">375 ml</option><option value="1500">1.5 L Magnum</option></select></div>
-      <div class="actions"><button id="calculate" class="btn primary">🧮 Run the Equation</button><button id="reset" class="btn secondary">Reset</button></div>
+      <div class="field our-only"><label for="wine">Wine / Producer</label><input id="wine" class="control" type="text" placeholder="e.g., Château Margaux" autocomplete="off"></div>
+      <div class="field"><label for="vintage">Vintage Year</label><input id="vintage" class="control" type="number" placeholder="e.g., 2018" min="1900" max="2026" inputmode="numeric"></div>
+      <div class="field"><label for="grape">Grape Type</label><select id="grape" class="control"><option value="">Select grape type...</option><option value="pinot noir">Pinot Noir</option><option value="cabernet sauvignon">Cabernet Sauvignon</option><option value="syrah">Syrah</option><option value="malbec">Malbec</option><option value="chardonnay">Chardonnay</option><option value="riesling">Riesling</option></select></div>
+      <div class="field"><label for="location">Winery Location</label><input id="location" class="control" type="text" placeholder="e.g., Napa Valley, Bordeaux, Tuscany" autocomplete="off"></div>
+      <div class="field our-only"><label for="bottle">Bottle Size</label><select id="bottle" class="control"><option value="750">750 ml</option><option value="375">375 ml</option><option value="1500">1.5 L Magnum</option></select></div>
+      <div class="actions"><button id="calculate" class="btn primary">Run the Equation</button><button id="reset" class="btn secondary">Reset</button></div>
     </div>
   </section>
 
@@ -115,7 +129,7 @@ function clue(icon,q,a,dir=''){return `<div class="clue"><div class="clue-icon">
 function setMode(next){
  mode=next;$('hero').classList.toggle('our-mode',mode==='our');$('ashTab').classList.toggle('active',mode==='ash');$('ourTab').classList.toggle('active',mode==='our');
  $('modelCaption').textContent=mode==='ash'?'Ash asks: “What did the weather say about this vintage?”':'Our model asks: “What are similar wines worth — and what makes this bottle different?”';
- $('calculate').textContent=mode==='ash'?'🧮 Run the Equation':'🍷 Estimate Fair Value';$('result').classList.remove('show');
+ $('calculate').textContent=mode==='ash'?'Run the Equation':'Estimate Fair Value';$('result').classList.remove('show');
 }
 function validate(){
  const vintage=$('vintage').value.trim(),location=$('location').value.trim(),grape=$('grape').value;
@@ -165,7 +179,7 @@ $('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[da
   set('.brand h1','와인 가격 계산기');set('.brand p','같은 한 병을 두 가지 방식으로 바라봅니다.');set('#originOpen','왜 Freakonomics일까요? ↗');
   set('#matchLaunchTitle','와인 궁합');set('#matchLaunchCopy','이 와인과 운명인 메뉴 찾기 · 재미로만 봐요');
   $('ashTab').textContent='Ash 모델';$('ourTab').innerHTML='우리 모델 <span style="opacity:.55">Beta</span>';
-  const labels={vintage:'📅 빈티지 연도',grape:'🍇 포도 품종',location:'📍 와이너리 지역',wine:'🏷️ 와인 / 생산자',bottle:'🍾 병 용량'};
+  const labels={vintage:'빈티지 연도',grape:'포도 품종',location:'와이너리 지역',wine:'와인 / 생산자',bottle:'병 용량'};
   Object.entries(labels).forEach(([id,t])=>{const e=qs(`label[for="${id}"]`);if(e)e.textContent=t});
   $('vintage').placeholder='예: 2018';$('location').placeholder='예: Napa Valley, Bordeaux, Tuscany';if($('wine'))$('wine').placeholder='예: Château Margaux';
   const grapeNames={'':'포도 품종을 선택하세요...','pinot noir':'피노 누아','cabernet sauvignon':'카베르네 소비뇽','syrah':'시라','malbec':'말벡','chardonnay':'샤르도네','riesling':'리슬링'};
@@ -179,7 +193,7 @@ $('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[da
   function loc(){
     const our=typeof mode!=='undefined'&&mode==='our';
     $('modelCaption').textContent=our?'우리 모델의 질문: “비슷한 와인은 얼마이고, 이 병은 무엇이 다를까?”':'Ash의 질문: “이 빈티지의 날씨는 어땠을까?”';
-    $('calculate').textContent=our?'🍷 적정가 추정하기':'🧮 방정식 계산하기';$('reset').textContent='초기화';
+    $('calculate').textContent=our?'적정가 추정하기':'방정식 계산하기';$('reset').textContent='초기화';
     if(!$('result').classList.contains('show'))return;
     const grape=grapeNames[$('grape').value]||$('grape').value,location=$('location').value,vintage=$('vintage').value;
     if(our){
