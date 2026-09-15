@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#3b1024" />
+  <title>Wine Match</title>
+  <meta name="description" content="A playful Korean name-stroke compatibility game for wine and food." />
+  <style>
+    :root{--text:#fff8f3;--muted:rgba(255,248,243,.72);--line:rgba(255,255,255,.16);--glass:rgba(255,255,255,.10);--glass2:rgba(255,255,255,.065);--gold:#f6c768;--gold2:#e79b3f;--pink:#f39ab4;--green:#a9d5ba}
+    *{box-sizing:border-box}html{min-height:100%;background:#331222}body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at 10% 0%,rgba(144,62,102,.58),transparent 34%),radial-gradient(circle at 100% 20%,rgba(190,93,41,.34),transparent 34%),linear-gradient(145deg,#291024 0%,#5a1823 52%,#6d351a 100%);padding:18px 12px 42px}
+    button,select{font:inherit}.wrap{width:min(760px,100%);margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.back,.share-top{min-height:44px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;padding:0 14px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.card{background:var(--glass);border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 70px rgba(12,3,8,.28);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.hero{padding:26px}.brand{text-align:center}.wine-icon{width:62px;height:62px;margin:0 auto 13px;display:grid;place-items:center;border-radius:20px;background:rgba(246,199,104,.14);border:1px solid rgba(246,199,104,.30);font-size:34px}.brand h1{font-size:clamp(30px,7vw,44px);line-height:1.02;margin:0 0 9px;letter-spacing:-1.4px}.brand p{margin:0 auto;color:var(--muted);font-size:14px;max-width:560px;line-height:1.55}.tag{display:inline-flex;margin-top:12px;border:1px solid rgba(246,199,104,.24);background:rgba(246,199,104,.08);border-radius:999px;padding:7px 10px;color:#f8d991;font-size:11px}
+    .tabs{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:rgba(0,0,0,.16);border:1px solid var(--line);border-radius:17px;margin:22px 0 18px}.tab{border:0;background:transparent;color:var(--muted);border-radius:13px;padding:12px 10px;font-weight:800;cursor:pointer}.tab.active{background:rgba(255,255,255,.14);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.15)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-weight:750;margin:0 0 8px;font-size:14px}.select{width:100%;min-height:50px;border-radius:15px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.11);color:#fff;padding:0 14px;outline:none}.select option{background:#321725;color:#fff}.primary{width:100%;margin-top:14px;min-height:52px;border:0;border-radius:16px;padding:0 18px;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#38170c;font-weight:850;cursor:pointer;box-shadow:0 12px 30px rgba(231,155,63,.2)}
+    .stage{display:none;margin-top:18px}.stage.show{display:block}.alias{display:none;margin-bottom:14px;padding:16px;border-radius:18px;background:rgba(246,199,104,.09);border:1px solid rgba(246,199,104,.22);text-align:center}.alias.show{display:block;animation:up .25s ease-out}.alias strong{display:block;margin-top:3px;font-size:16px}.swap{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:11px}.swap .old{text-decoration:line-through;color:var(--muted)}.swap .new{font-weight:900;color:#ffe39f;font-size:20px}.playbox{border-radius:22px;background:rgba(255,255,255,.055);border:1px solid var(--line);padding:18px 10px}.step{text-align:center;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em}.letters{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:13px}.chip{min-width:38px;height:40px;padding:0 8px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);font-weight:800}.chip.wine{background:rgba(246,199,104,.11)}.chip.food{background:rgba(243,154,180,.10)}.calc{margin-top:18px}.triangle{margin-top:12px;display:grid;gap:6px;overflow:hidden}.row{display:flex;justify-content:center;gap:6px;opacity:0;transform:translateY(-4px);transition:.22s}.row.show{opacity:1;transform:none}.num{min-width:31px;height:31px;padding:0 7px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);border:1px solid var(--line);font-weight:750;font-variant-numeric:tabular-nums}.result{display:none;text-align:center;padding:22px 6px 4px}.result.show{display:block;animation:up .3s ease-out}.result-label{color:var(--muted);font-size:13px}.score{font-size:64px;font-weight:900;line-height:1;margin-top:4px;letter-spacing:-3px;color:var(--gold)}.score small{font-size:24px;letter-spacing:0}.verdict{margin-top:8px;font-size:19px;font-weight:800}.disclaimer{margin:10px auto 0;max-width:520px;color:rgba(255,255,255,.52);font-size:11px;line-height:1.5}.result-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.secondary,.share-result{min-height:48px;border-radius:15px;padding:0 14px;font-weight:800;cursor:pointer}.secondary{border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff}.share-result{border:0;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#38170c}.toast{min-height:20px;margin-top:9px;text-align:center;color:#ffe7aa;font-size:12px}
+    .destiny{display:none}.destiny.show{display:block}.destiny-note{color:var(--muted);font-size:12px;line-height:1.5;margin:10px 0 14px}.rank{display:grid;gap:9px}.rank button{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.07);color:#fff;border-radius:16px;padding:13px 14px;cursor:pointer}.medal{font-size:20px}.rank-name{font-weight:800}.rank-sub{font-size:11px;color:var(--muted);margin-top:2px}.rank-score{font-size:22px;font-weight:900;color:#ffe39f}.destiny-alias{display:none;margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(246,199,104,.08);border:1px solid rgba(246,199,104,.18);color:#ffe2a0;font-size:12px;line-height:1.5}.destiny-alias.show{display:block}
+    .method{margin-top:14px;padding:18px 20px}.method h3{margin:0 0 6px;font-size:15px}.method p{margin:0;color:rgba(255,255,255,.5);font-size:11px;line-height:1.55}.footer{margin-top:13px;text-align:center;color:rgba(255,255,255,.38);font-size:10px;line-height:1.5}@keyframes up{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}@media(max-width:560px){body{padding:12px 10px 30px}.hero{padding:22px 16px}.grid{grid-template-columns:1fr}.result-actions{grid-template-columns:1fr}.score{font-size:58px}.topbar{margin-bottom:10px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="topbar"><a class="back" href="./" id="backBtn">←</a><button class="share-top" type="button" id="shareTop">↗ <span id="shareTopLabel"></span></button></div>
+    <section class="card hero">
+      <div class="brand"><div class="wine-icon">💘</div><h1 id="title"></h1><p id="subtitle"></p><div class="tag" id="funTag"></div></div>
+      <div class="tabs"><button id="pairTab" class="tab active" type="button"></button><button id="destinyTab" class="tab" type="button"></button></div>
+
+      <section id="pairPanel">
+        <div class="grid">
+          <div class="field"><label for="grape" id="grapeLabel"></label><select id="grape" class="select"></select></div>
+          <div class="field"><label for="food" id="foodLabel"></label><select id="food" class="select"></select></div>
+        </div>
+        <button id="runBtn" class="primary" type="button"></button>
+        <div id="stage" class="stage" aria-live="polite">
+          <div id="aliasBox" class="alias"><div id="aliasLine"></div><strong id="aliasStrong"></strong><div class="swap"><span id="aliasOld" class="old"></span><span>→</span><span id="aliasNew" class="new"></span></div></div>
+          <div class="playbox">
+            <div class="step" id="mixStep"></div><div id="letters" class="letters"></div>
+            <div class="calc"><div class="step" id="calcStep"></div><div id="triangle" class="triangle"></div></div>
+            <div id="result" class="result"><div class="result-label" id="resultLabel"></div><div id="score" class="score"></div><div id="verdict" class="verdict"></div><div id="disclaimer" class="disclaimer"></div><div class="result-actions"><button id="againBtn" class="secondary" type="button"></button><button id="shareResult" class="share-result" type="button"></button></div><div id="toast" class="toast"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="destinyPanel" class="destiny">
+        <div class="field"><label for="destinyGrape" id="destinyGrapeLabel"></label><select id="destinyGrape" class="select"></select></div>
+        <p class="destiny-note" id="destinyNote"></p><div id="rank" class="rank"></div><div id="destinyAlias" class="destiny-alias"></div>
+      </section>
+    </section>
+    <section class="card method"><h3 id="methodTitle"></h3><p id="methodCopy"></p></section>
+    <div class="footer" id="footer"></div>
+  </main>
+<script>
+(() => {
+  const lang=(navigator.language||'en').toLowerCase().startsWith('ko')?'ko':'en';
+  document.documentElement.lang=lang;
+  const T={
+    ko:{title:'와인 궁합',subtitle:'포도 품종과 메뉴 이름을 옛날 이름궁합처럼 섞어봐요.',tag:'실제 페어링 점수 아님 · 이름 획수 놀이',pair:'궁합 보기',destiny:'운명 찾기',grape:'🍇 포도 품종',food:'🍽️ 메뉴',run:'💘 두근두근 궁합 보기',aliasLine:'이름이 조금 길어서,',aliasStrong:'이번엔 줄임말로 가볼게요!',mix:'STEP 1 · 두 이름을 골고루 섞는 중',calc:'STEP 2 · 획수로 바꾸고, 옆 숫자끼리 계속 더하기',result:'마지막 두 숫자를 붙이면…',again:'다른 궁합 보기',share:'결과 공유하기',shareTop:'공유',copied:'링크를 복사했어요',shareText:'이 와인 궁합 결과 봐봐 🍷💘',destinyGrape:'🍇 운명을 찾을 품종',destinyNote:'메뉴들과 전부 이름궁합을 계산해서 TOP 5를 찾아요.',aliasDestiny:(a,b)=>`${a}는 운명 찾기에서도 줄임말 ${b}로 계산해요.`,methodTitle:'어떻게 계산해요?',methodCopy:'한국식 이름궁합 놀이처럼 한글 획수를 숫자로 바꾸고, 두 이름을 골고루 섞은 뒤 옆 숫자를 더해 마지막 두 자리까지 줄입니다. 점수에는 실제 와인 페어링 지식이 들어가지 않아요.',footer:'Wine Price Calculator · Fun Lab',verdict:s=>s>=90?'거의 운명인데요? 💘':s>=75?'꽤 잘 맞는 사이예요 ❤️':s>=55?'은근히 가능성 있어요 🙂':s>=30?'친구로는 괜찮을지도 😌':'각자의 길을 추천합니다 💔',rankSub:s=>s>=90?'운명 후보':s>=75?'아주 좋은 궁합':s>=55?'은근히 잘 맞음':'의외의 조합',back:'가격 계산기로 돌아가기'},
+    en:{title:'Wine Match',subtitle:'Mix a grape variety and a menu name like an old-school Korean name compatibility game.',tag:'Just for fun · not a real pairing score',pair:'Compatibility',destiny:'Find my destiny',grape:'🍇 Grape variety',food:'🍽️ Menu',run:'💘 Reveal compatibility',aliasLine:'That name is a little long,',aliasStrong:"so we'll use a shorthand this time!",mix:'STEP 1 · Evenly mixing the two names',calc:'STEP 2 · Turn letters into stroke counts, then keep adding neighbors',result:'When the final two digits remain…',again:'Try another match',share:'Share result',shareTop:'Share',copied:'Link copied',shareText:'Check out this wine match result 🍷💘',destinyGrape:'🍇 Grape to match',destinyNote:'We run the name game against every menu and show the top 5.',aliasDestiny:(a,b)=>`${a} uses the shorthand ${b} for this Korean stroke-count game.`,methodTitle:'How is it calculated?',methodCopy:'This is based on a Korean name-compatibility game. We convert Hangul letters into stroke counts, distribute both names evenly, then repeatedly add neighboring digits until two remain. Real wine pairing knowledge is not part of the score.',footer:'Wine Price Calculator · Fun Lab',verdict:s=>s>=90?'Almost destiny 💘':s>=75?'A very good match ❤️':s>=55?'There might be something here 🙂':s>=30?'Maybe better as friends 😌':'Probably separate paths 💔',rankSub:s=>s>=90?'Destiny contender':s>=75?'Very strong match':s>=55?'Surprisingly good':'Unexpected pairing',back:'Back to price calculator'}
+  }[lang];
+
+  const grapes=[
+    {id:'sauvignon-blanc',ko:'소비뇽블랑',en:'Sauvignon Blanc',calc:'소비뇽블랑'},
+    {id:'chardonnay',ko:'샤르도네',en:'Chardonnay',calc:'샤르도네'},
+    {id:'pinot-noir',ko:'피노누아',en:'Pinot Noir',calc:'피노누아'},
+    {id:'cabernet-sauvignon',ko:'카베르네소비뇽',en:'Cabernet Sauvignon',calc:'카베르네소비뇽',alias:'까쇼'},
+    {id:'riesling',ko:'리슬링',en:'Riesling',calc:'리슬링'},
+    {id:'malbec',ko:'말벡',en:'Malbec',calc:'말벡'},
+    {id:'merlot',ko:'메를로',en:'Merlot',calc:'메를로'},
+    {id:'syrah',ko:'시라',en:'Syrah',calc:'시라'},
+    {id:'zinfandel',ko:'진판델',en:'Zinfandel',calc:'진판델'},
+    {id:'moscato',ko:'모스카토',en:'Moscato',calc:'모스카토'}
+  ];
+  const foods=[
+    {id:'grilled-fish',ko:'생선구이',en:'Grilled fish',calc:'생선구이'},
+    {id:'samgyeopsal',ko:'삼겹살',en:'Samgyeopsal',calc:'삼겹살'},
+    {id:'fried-chicken',ko:'치킨',en:'Fried chicken',calc:'치킨'},
+    {id:'pizza',ko:'피자',en:'Pizza',calc:'피자'},
+    {id:'sashimi',ko:'생선회',en:'Sashimi',calc:'생선회'},
+    {id:'steak',ko:'스테이크',en:'Steak',calc:'스테이크'},
+    {id:'tteokbokki',ko:'떡볶이',en:'Tteokbokki',calc:'떡볶이'},
+    {id:'pasta',ko:'파스타',en:'Pasta',calc:'파스타'},
+    {id:'kimchi-jjigae',ko:'김치찌개',en:'Kimchi jjigae',calc:'김치찌개'},
+    {id:'sushi',ko:'초밥',en:'Sushi',calc:'초밥'},
+    {id:'cheese',ko:'치즈',en:'Cheese',calc:'치즈'},
+    {id:'lamb-chops',ko:'양갈비',en:'Lamb chops',calc:'양갈비'}
+  ];
+
+  const initials=[2,4,2,3,6,5,4,4,8,2,4,1,3,6,4,3,4,4,3];
+  const vowels=[2,3,3,4,2,3,3,4,2,4,5,3,3,2,4,5,3,3,1,2,1];
+  const finals=[0,2,4,2,5,5,5,3,5,7,9,9,7,9,9,8,4,6,2,4,1,3,4,3,4,4,3,4];
+  function strokes(ch){const code=ch.codePointAt(0);if(code<0xAC00||code>0xD7A3)return 0;const n=code-0xAC00;const i=Math.floor(n/588),v=Math.floor((n%588)/28),f=n%28;return initials[i]+vowels[v]+finals[f];}
+  function balancedMerge(a,b){const A=[...a].map((ch,i)=>({ch,side:'wine',p:(i+.5)/a.length}));const B=[...b].map((ch,i)=>({ch,side:'food',p:(i+.5)/b.length}));return A.concat(B).sort((x,y)=>x.p-y.p||(x.side==='food'?-1:1));}
+  function rowsFor(items){const rows=[items.map(x=>strokes(x.ch))];while(rows[rows.length-1].length>2){const prev=rows[rows.length-1],next=[];for(let i=0;i<prev.length-1;i++)next.push((prev[i]+prev[i+1])%10);rows.push(next);}return rows;}
+  function compute(g,f){const calcName=g.alias||g.calc;const items=balancedMerge(calcName,f.calc);const rows=rowsFor(items);const last=rows[rows.length-1];return {items,rows,score:(last[0]||0)*10+(last[1]||0),calcName};}
+
+  const $=id=>document.getElementById(id);let timers=[];
+  function label(x){return x[lang];}
+  function populate(select,data){select.innerHTML=data.map(x=>`<option value="${x.id}">${label(x)}</option>`).join('');}
+  function grapeById(id){return grapes.find(x=>x.id===id)||grapes[0]}function foodById(id){return foods.find(x=>x.id===id)||foods[0]}
+  function setText(){document.title=T.title+' · Wine Price Calculator';$('title').textContent=T.title;$('subtitle').textContent=T.subtitle;$('funTag').textContent=T.tag;$('pairTab').textContent=T.pair;$('destinyTab').textContent=T.destiny;$('grapeLabel').textContent=T.grape;$('foodLabel').textContent=T.food;$('runBtn').textContent=T.run;$('aliasLine').textContent=T.aliasLine;$('aliasStrong').textContent=T.aliasStrong;$('mixStep').textContent=T.mix;$('calcStep').textContent=T.calc;$('resultLabel').textContent=T.result;$('againBtn').textContent=T.again;$('shareResult').textContent=T.share;$('shareTopLabel').textContent=T.shareTop;$('destinyGrapeLabel').textContent=T.destinyGrape;$('destinyNote').textContent=T.destinyNote;$('methodTitle').textContent=T.methodTitle;$('methodCopy').textContent=T.methodCopy;$('footer').textContent=T.footer;$('backBtn').setAttribute('aria-label',T.back);}
+
+  function clearStage(){timers.forEach(clearTimeout);timers=[];$('stage').classList.remove('show');$('aliasBox').classList.remove('show');$('letters').innerHTML='';$('triangle').innerHTML='';$('result').classList.remove('show');$('toast').textContent='';}
+  function renderCalc(g,f,instant=false){clearStage();const r=compute(g,f);$('stage').classList.add('show');if(g.alias){$('aliasOld').textContent=label(g);$('aliasNew').textContent=g.alias;$('aliasBox').classList.add('show');}
+    $('letters').innerHTML=r.items.map(x=>`<span class="chip ${x.side}">${x.ch}</span>`).join('');
+    $('triangle').innerHTML=r.rows.map(row=>`<div class="row">${row.map(n=>`<span class="num">${n}</span>`).join('')}</div>`).join('');
+    const rowEls=[...$('triangle').querySelectorAll('.row')];const reveal=()=>{$('score').innerHTML=`${String(r.score).padStart(2,'0')}<small>%</small>`;$('verdict').textContent=T.verdict(r.score);$('disclaimer').textContent=lang==='ko'?'점수는 100% 이름 획수 놀이예요. 산도, 바디, 실제 음식 궁합은 반영하지 않았습니다.':'100% name-stroke game. Acidity, body and real food pairing are not used.';$('result').classList.add('show');};
+    if(instant){rowEls.forEach(x=>x.classList.add('show'));reveal();return;}
+    rowEls.forEach((el,i)=>timers.push(setTimeout(()=>{el.classList.add('show');if(i===rowEls.length-1)timers.push(setTimeout(reveal,260));},i*210)));
+  }
+  function setMode(mode){const pair=mode==='pair';$('pairPanel').style.display=pair?'block':'none';$('destinyPanel').classList.toggle('show',!pair);$('pairTab').classList.toggle('active',pair);$('destinyTab').classList.toggle('active',!pair);if(!pair)renderDestiny();}
+  function renderDestiny(){const g=grapeById($('destinyGrape').value);const ranked=foods.map(f=>({f,...compute(g,f)})).sort((a,b)=>b.score-a.score).slice(0,5);$('rank').innerHTML=ranked.map((x,i)=>`<button type="button" data-food="${x.f.id}"><span class="medal">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span><span><span class="rank-name">${label(x.f)}</span><span class="rank-sub">${T.rankSub(x.score)}</span></span><span class="rank-score">${String(x.score).padStart(2,'0')}%</span></button>`).join('');$('destinyAlias').classList.toggle('show',!!g.alias);$('destinyAlias').textContent=g.alias?T.aliasDestiny(label(g),g.alias):'';$('rank').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{$('grape').value=g.id;$('food').value=b.dataset.food;setMode('pair');renderCalc(g,foodById(b.dataset.food),false);history.replaceState(null,'',shareUrl(g.id,b.dataset.food));}));}
+  function shareUrl(gid,fid){const u=new URL(location.href);u.search='';u.searchParams.set('grape',gid);u.searchParams.set('food',fid);u.searchParams.set('result','1');return u.toString();}
+  async function shareCurrent(){const g=grapeById($('grape').value),f=foodById($('food').value),url=shareUrl(g.id,f.id);try{if(navigator.share){await navigator.share({title:T.title,text:T.shareText,url});}else if(navigator.clipboard){await navigator.clipboard.writeText(url);$('toast').textContent=T.copied;}else{prompt(T.share,url);}}catch(e){if(e&&e.name!=='AbortError')$('toast').textContent=url;}}
+  function loadParams(){const p=new URLSearchParams(location.search),gid=p.get('grape'),fid=p.get('food');if(gid&&grapes.some(x=>x.id===gid)){$('grape').value=gid;$('destinyGrape').value=gid}if(fid&&foods.some(x=>x.id===fid))$('food').value=fid;if(p.get('result')==='1'&&gid&&fid)renderCalc(grapeById(gid),foodById(fid),true);}
+
+  populate($('grape'),grapes);populate($('destinyGrape'),grapes);populate($('food'),foods);setText();loadParams();
+  $('runBtn').addEventListener('click',()=>{const g=grapeById($('grape').value),f=foodById($('food').value);renderCalc(g,f,false);history.replaceState(null,'',shareUrl(g.id,f.id));});
+  $('pairTab').addEventListener('click',()=>setMode('pair'));$('destinyTab').addEventListener('click',()=>setMode('destiny'));$('destinyGrape').addEventListener('change',renderDestiny);$('againBtn').addEventListener('click',()=>{clearStage();history.replaceState(null,'',location.pathname);});$('shareResult').addEventListener('click',shareCurrent);$('shareTop').addEventListener('click',shareCurrent);
+})();
+</script>
+</body>
+</html>
