@@ -86,7 +86,7 @@
 
   const initials=[2,4,2,3,6,5,4,4,8,2,4,1,3,6,4,3,4,4,3];
   const vowels=[2,3,3,4,2,3,3,4,2,4,5,3,3,2,4,5,3,3,1,2,1];
-  const finals=[0,2,4,2,5,5,5,3,5,7,9,9,7,9,9,8,4,6,2,4,1,3,4,3,4,4,3,4];
+  const finals=[0,2,4,4,2,5,5,3,5,7,9,9,7,9,9,8,4,4,6,2,4,1,3,4,3,4,4,3];
   function strokes(ch){const code=ch.codePointAt(0);if(code<0xAC00||code>0xD7A3)return 0;const n=code-0xAC00;const i=Math.floor(n/588),v=Math.floor((n%588)/28),f=n%28;return initials[i]+vowels[v]+finals[f];}
   function balancedMerge(a,b){const A=[...a].map((ch,i)=>({ch,side:'wine',p:(i+.5)/a.length}));const B=[...b].map((ch,i)=>({ch,side:'food',p:(i+.5)/b.length}));return A.concat(B).sort((x,y)=>x.p-y.p||(x.side==='food'?-1:1));}
   function rowsFor(items){const rows=[items.map(x=>strokes(x.ch))];while(rows[rows.length-1].length>2){const prev=rows[rows.length-1],next=[];for(let i=0;i<prev.length-1;i++)next.push((prev[i]+prev[i+1])%10);rows.push(next);}return rows;}
