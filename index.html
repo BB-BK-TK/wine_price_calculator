@@ -162,7 +162,22 @@ function scanTextIsKo(){return (document.documentElement.lang||navigator.languag
 function setScanState(status,found='',progress=0){
  $('scanResult').classList.add('show');$('scanStatus').textContent=status;$('scanFound').textContent=found;$('scanProgress').style.width=Math.max(0,Math.min(100,progress))+'%';
 }
-function extractLabelDetails(raw){
+function plausibleWineLine(line){
+ const clean=(line||'').replace(/\s+/g,' ').trim();
+ if(clean.length<4||clean.length>48)return false;
+ const letters=(clean.match(/[A-Za-zÀ-ÿ]/g)||[]).length;
+ const digits=(clean.match(/\d/g)||[]).length;
+ const tokens=clean.split(' ').filter(Boolean);
+ const singleLetterTokens=tokens.filter(t=>/^[A-Za-zÀ-ÿ]$/.test(t)).length;
+ const longWord=tokens.some(t=>(t.match(/[A-Za-zÀ-ÿ]/g)||[]).length>=4);
+ const alphaNum=letters+digits;
+ if(letters<5||!longWord||singleLetterTokens>0)return false;
+ if(digits>1)return false;
+ if(alphaNum&&letters/alphaNum<.78)return false;
+ if(/^[^A-Za-zÀ-ÿ]*$/.test(clean))return false;
+ return true;
+}
+function extractLabelDetails(raw,ocrConfidence=0){
  const text=(raw||'').replace(/[|]/g,'I'),lower=text.toLowerCase(),currentYear=new Date().getFullYear();
  const years=[...text.matchAll(/\b(19\d{2}|20\d{2})\b/g)].map(m=>Number(m[1])).filter(y=>y>=1900&&y<=currentYear);
  const vintage=years.length?String(years[0]):'';
@@ -172,15 +187,15 @@ function extractLabelDetails(raw){
  const blocked=['appellation','contains sulfites','contains sulphites','product of','alcohol','alc.','750 ml','750ml','mis en bouteille','bottled by','imported by','reserve','reserva'];
  const candidates=lines.filter(line=>{
    const l=line.toLowerCase();
-   if(line.length<3||line.length>48||/^\W*\d+[\W\d]*$/.test(line))return false;
+   if(!plausibleWineLine(line))return false;
    if(vintage&&l.includes(vintage))return false;
    if(blocked.some(w=>l.includes(w)))return false;
    if(grapeMatch&&grapeMatch.aliases.some(a=>l.includes(a)))return false;
    if(regionMatch&&regionMatch.aliases.some(a=>l.includes(a)))return false;
-   return /[a-zÀ-ÿ]/i.test(line);
+   return true;
  });
- const wine=candidates.slice(0,2).join(' · ').slice(0,80);
- return {wine,vintage,grape:grapeMatch?.value||'',location:regionMatch?.value||''};
+ const wine=ocrConfidence>=55?candidates.slice(0,2).join(' · ').slice(0,80):'';
+ return {wine,vintage,grape:grapeMatch?.value||'',location:regionMatch?.value||'',confidence:ocrConfidence};
 }
 function applyLabelDetails(d){
  setMode('our');
@@ -188,7 +203,11 @@ function applyLabelDetails(d){
  const vals=[d.wine,d.vintage,d.grape,d.location].filter(Boolean);
  const pretty=[d.wine,d.vintage,d.grape&&$('grape').selectedOptions[0]?.textContent,d.location].filter(Boolean).join(' · ');
  const count=vals.length;
- setScanState(scanTextIsKo()?('라벨에서 '+count+'/4개 항목을 찾았어요. 확인 후 수정해 주세요.'):('Found '+count+'/4 fields. Review and edit if needed.'),pretty,100);
+ if(!count){
+   setScanState(scanTextIsKo()?'신뢰할 만한 정보를 찾지 못했어요. 더 가까이, 정면에서 다시 찍거나 직접 입력해 주세요.':'No reliable label details found. Try a closer, straight-on photo or enter the details manually.','',100);
+   return;
+ }
+ setScanState(scanTextIsKo()?('라벨에서 '+count+'/4개 항목을 찾았어요. 자동 입력값을 확인해 주세요.'):('Found '+count+'/4 fields. Review the autofilled details.'),pretty,100);
 }
 async function readWineLabel(file){
  if(!file)return;
@@ -198,7 +217,7 @@ async function readWineLabel(file){
  setScanState(scanTextIsKo()?'라벨을 읽고 있어요…':'Reading the label…','',4);
  try{
    const result=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text'){const p=Math.round((m.progress||0)*100);setScanState(scanTextIsKo()?('라벨을 읽고 있어요… '+p+'%'):('Reading the label… '+p+'%'),'',Math.max(6,p));}}});
-   applyLabelDetails(extractLabelDetails(result?.data?.text||''));
+   applyLabelDetails(extractLabelDetails(result?.data?.text||'',Number(result?.data?.confidence||0)));
  }catch(e){
    console.error('Label scan failed',e);setScanState(scanTextIsKo()?'인식에 실패했어요. 더 밝고 정면에서 다시 찍어보세요.':'Couldn’t read this label. Try again in better light, straight-on.','',0);
  }finally{$('cameraBtn').disabled=false;$('galleryBtn').disabled=false;$('cameraInput').value='';$('galleryInput').value=''}
@@ -206,8 +225,9 @@ async function readWineLabel(file){
 function clue(icon,q,a,dir=''){return `<div class="clue"><div class="clue-icon">${icon}</div><div><div class="clue-q">${q}</div><div class="clue-a">${a}</div></div><div class="clue-dir">${dir}</div></div>`}
 function setMode(next){
  mode=next;$('hero').classList.toggle('our-mode',mode==='our');$('ashTab').classList.toggle('active',mode==='ash');$('ourTab').classList.toggle('active',mode==='our');
- $('modelCaption').textContent=mode==='ash'?'Ash asks: “What did the weather say about this vintage?”':'Our model asks: “What are similar wines worth — and what makes this bottle different?”';
- $('calculate').textContent=mode==='ash'?'Run the Equation':'Estimate Fair Value';$('result').classList.remove('show');
+ const ko=scanTextIsKo();
+ $('modelCaption').textContent=ko?(mode==='ash'?'Ash의 질문: “이 빈티지의 날씨는 어땠을까?”':'우리 모델의 질문: “비슷한 와인은 얼마이고, 이 병은 무엇이 다를까?”'):(mode==='ash'?'Ash asks: “What did the weather say about this vintage?”':'Our model asks: “What are similar wines worth — and what makes this bottle different?”');
+ $('calculate').textContent=ko?(mode==='ash'?'방정식 계산하기':'적정가 추정하기'):(mode==='ash'?'Run the Equation':'Estimate Fair Value');$('result').classList.remove('show');
 }
 function validate(){
  const vintage=$('vintage').value.trim(),location=$('location').value.trim(),grape=$('grape').value;
