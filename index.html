@@ -304,6 +304,49 @@ async function readLabelOcr(file){
  const result=await Tesseract.recognize(source,'eng',{logger:m=>{if(m.status==='recognizing text'){const p=Math.round((m.progress||0)*100);setScanState(scanTextIsKo()?('라벨 글자를 확인하고 있어요… '+p+'%'):('Checking label text… '+p+'%'),'',Math.max(30,p));}}});
  return extractLabelDetails(result?.data?.text||'',Number(result?.data?.confidence||0));
 }
+async function imageCropForVintage(file){
+ return new Promise((resolve,reject)=>{
+   const url=URL.createObjectURL(file),img=new Image();
+   img.onload=()=>{
+     try{
+       const sw=img.naturalWidth||img.width,sh=img.naturalHeight||img.height;
+       const sx=Math.round(sw*.12),sy=Math.round(sh*.45),cw=Math.round(sw*.76),ch=Math.round(sh*.38);
+       const targetW=1200,scale=targetW/cw,targetH=Math.round(ch*scale);
+       const canvas=document.createElement('canvas');canvas.width=targetW;canvas.height=targetH;
+       const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(img,sx,sy,cw,ch,0,0,canvas.width,canvas.height);
+       const imageData=ctx.getImageData(0,0,canvas.width,canvas.height),p=imageData.data;
+       for(let i=0;i<p.length;i+=4){
+         const g=.299*p[i]+.587*p[i+1]+.114*p[i+2];
+         const v=g<195?0:255;p[i]=p[i+1]=p[i+2]=v;
+       }
+       ctx.putImageData(imageData,0,0);
+       const data=canvas.toDataURL('image/png');URL.revokeObjectURL(url);resolve(data);
+     }catch(e){URL.revokeObjectURL(url);reject(e)}
+   };
+   img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Vintage image decode failed'))};
+   img.src=url;
+ });
+}
+async function readVintageOcr(file){
+ if(!window.Tesseract)return '';
+ try{
+   setScanState(scanTextIsKo()?'빈티지 숫자를 한 번 더 확인하고 있어요…':'Double-checking the vintage year…','',74);
+   const source=await imageCropForVintage(file);
+   const result=await Tesseract.recognize(
+     source,
+     'eng',
+     {},
+     {tessedit_char_whitelist:'0123456789'}
+   );
+   const currentYear=new Date().getFullYear();
+   const years=[...(result?.data?.text||'').matchAll(/\b(19\d{2}|20\d{2})\b/g)]
+     .map(m=>Number(m[1]))
+     .filter(y=>y>=1900&&y<=currentYear);
+   return years.length?String(years[0]):'';
+ }catch(e){
+   console.warn('Vintage OCR failed',e);return '';
+ }
+}
 function mergeDetectedDetails(vision,ocr){
  const v=vision||{},o=ocr||{};
  return {
@@ -329,6 +372,10 @@ async function readWineLabel(file){
    const needsSupplement=!identity||!vision?.vintage||!vision?.grape||!vision?.location;
    if(needsSupplement){
      try{ocr=await readLabelOcr(file)}catch(ocrError){console.warn('OCR supplement failed',ocrError)}
+   }
+   if(!vision?.vintage&&!ocr?.vintage){
+     const vintage=await readVintageOcr(file);
+     if(vintage)ocr={...(ocr||{}),vintage};
    }
    const merged=mergeDetectedDetails(vision,ocr);
    const found=applyVisionDetails(merged);
