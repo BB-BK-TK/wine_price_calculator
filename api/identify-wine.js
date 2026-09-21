@@ -1,6 +1,25 @@
 import { generateText } from 'ai';
 
 export default async function handler(req, res) {
+  if (req.method === 'GET' && req.query?.health === 'vision') {
+    try {
+      const { text } = await generateText({
+        model: 'openai/gpt-4o',
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'text', text: 'Look at this image. Return exactly VISION_OK if you can process it.' },
+            { type: 'image', image: 'https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon_light_background.png' }
+          ]
+        }],
+        maxOutputTokens: 30
+      });
+      return res.status(200).json({ ok: text.includes('VISION_OK'), text: text.slice(0, 80) });
+    } catch (error) {
+      console.error('vision health error', error);
+      return res.status(500).json({ ok: false, error: String(error?.message || error).slice(0, 180) });
+    }
+  }
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
