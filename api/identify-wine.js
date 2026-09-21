@@ -1,5 +1,3 @@
-import { generateText } from 'ai';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -15,16 +13,18 @@ export default async function handler(req, res) {
       return res.status(413).json({ error: 'Image is too large.' });
     }
 
+    const token = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+    if (!token) {
+      return res.status(503).json({ error: 'Vision service is not configured.' });
+    }
+
     const prompt = [
       'Identify the wine bottle in this photo from the visible label and bottle.',
       'Return ONLY valid JSON, no markdown, using exactly these keys:',
       '{"producer":string|null,"wine":string|null,"vintage":number|null,"grape":string|null,"location":string|null,"country":string|null,"confidence":number,"reason":string}',
       'Rules:',
-      '- Inspect the label field by field, including the lower half where the vintage often appears as a 4-digit year.',
-      '- If a 4-digit vintage is clearly visible, return it even when the exact producer or wine name is uncertain.',
       '- Do not guess a vintage that is not visible.',
       '- Do not invent producer, wine, grape, or region. If uncertain, use null.',
-      '- A generic appellation such as Bordeaux is a location, not a producer or wine name.',
       '- Normalize common grape names in English (e.g. Cabernet Sauvignon, Pinot Noir, Chardonnay, Riesling, Syrah, Malbec).',
       '- location should be the most useful wine region visible or strongly identifiable from the label, not a retailer/location.',
       '- confidence is 0 to 1 for the overall identification.',
@@ -32,21 +32,42 @@ export default async function handler(req, res) {
       '- If the label is too blurry or obstructed, return null fields and low confidence.'
     ].join('\n');
 
-    const { text } = await generateText({
-      model: 'openai/gpt-4o',
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'text', text: prompt },
-          { type: 'image', image }
-        ]
-      }],
-      maxOutputTokens: 700
+    const gatewayResponse = await fetch('https://ai-gateway.vercel.sh/v1/responses', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-5.6-sol',
+        input: [{
+          role: 'user',
+          content: [
+            { type: 'input_text', text: prompt },
+            { type: 'input_image', image_url: image, detail: 'high' }
+          ]
+        }],
+        max_output_tokens: 700
+      })
     });
 
-    const jsonText = text.match(/\{[\s\S]*\}/)?.[0];
+    if (!gatewayResponse.ok) {
+      const detail = await gatewayResponse.text();
+      console.error('AI Gateway error', gatewayResponse.status, detail.slice(0, 500));
+      return res.status(502).json({ error: 'Wine identification failed.' });
+    }
+
+    const result = await gatewayResponse.json();
+    const outputText =
+      result.output_text ||
+      result.output?.flatMap(item => item.content || [])
+        .map(item => item.text || item.output_text || '')
+        .join('\n') ||
+      '';
+
+    const jsonText = outputText.match(/\{[\s\S]*\}/)?.[0];
     if (!jsonText) {
-      console.error('No JSON in model response', text.slice(0, 500));
+      console.error('No JSON in model response', outputText.slice(0, 500));
       return res.status(502).json({ error: 'Wine identification returned an invalid result.' });
     }
 

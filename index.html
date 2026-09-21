@@ -8,47 +8,35 @@
   <meta name="description" content="A Freakonomics-inspired experiment in what data can — and can’t — tell us about wine value." />
   <style>
     :root{
-      --paper:#f4efe9;--paper-2:#ebe3da;--surface:#fffdf9;--ink:#211916;--muted:#7a6d67;
-      --line:#ded4ca;--wine:#5b1730;--wine-deep:#35101f;--wine-soft:#f0e2e7;--brass:#a56e2d;
-      --brass-soft:#f3e6d2;--green:#446754;--shadow:0 18px 50px rgba(61,34,25,.10)
+      --paper:#f5f1eb;--surface:#fffdf9;--ink:#211d1a;--muted:#766c65;--line:#d9d0c8;
+      --wine:#641b38;--wine-deep:#37101f;--wine-soft:#eadde1;--brass:#9d6a2e;--brass-soft:#f2e7d7;
     }
     *{box-sizing:border-box}
     html{min-height:100%;background:var(--paper)}
-    body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:
-      radial-gradient(circle at 100% 0%,rgba(91,23,48,.08),transparent 30%),
-      linear-gradient(180deg,#f8f4ef 0%,var(--paper) 48%,#eee7e0 100%);padding:22px 14px 52px}
-    button,input,select{font:inherit}.wrap{width:min(720px,100%);margin:auto}
-    .card{background:rgba(255,253,249,.94);border:1px solid rgba(101,75,64,.15);border-radius:24px;box-shadow:var(--shadow)}
-    .hero{padding:28px}.brand{text-align:left;margin-bottom:26px;position:relative;padding-right:72px}
-    .wine-icon{position:absolute;right:0;top:0;width:54px;height:54px;display:grid;place-items:center;border-radius:50%;background:var(--wine);color:#fff;font-size:0;box-shadow:0 10px 24px rgba(91,23,48,.18)}
-    .wine-icon:after{content:'W';font-family:Georgia,"Times New Roman",serif;font-size:25px;font-style:italic;color:#f7e9d5}
-    .brand h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,8vw,54px);font-weight:500;line-height:.98;margin:0 0 12px;letter-spacing:-2.2px;color:var(--wine-deep)}
-    .brand p{margin:0;color:var(--muted);font-size:14px;line-height:1.55;max-width:480px}
-    .tag{display:inline-flex;align-items:center;gap:5px;margin-top:13px;border:0;border-bottom:1px solid rgba(91,23,48,.28);background:transparent;padding:4px 0;color:var(--wine);font-size:11px;font-weight:750;cursor:pointer}
-    .match-launch{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin:0 0 22px;padding:13px 14px;border-radius:16px;border:1px solid var(--line);background:#faf6f1;color:var(--ink);text-decoration:none;transition:.18s}
-    .match-launch:hover{border-color:#cbb9aa;background:#fffaf4;transform:translateY(-1px)}
-    .match-launch-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--wine-soft);font-size:18px}.match-launch strong{display:block;font-size:13px;color:var(--wine-deep)}.match-launch small{display:block;margin-top:3px;color:var(--muted);font-size:10.5px;line-height:1.35}.match-launch-arrow{color:var(--wine);font-size:17px}
-    .scan-card{margin:0 0 14px;padding:16px;border:1px solid #d9cec4;border-radius:18px;background:#fffaf5}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.scan-copy strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:18px;font-weight:500;color:var(--wine-deep)}.scan-copy small{display:block;margin-top:4px;color:var(--muted);font-size:10.5px;line-height:1.45}.scan-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.scan-btn{border-radius:12px;padding:12px 11px;border:1px solid #d4c5ba;background:var(--surface);color:#55443d;font-size:12px;font-weight:850;cursor:pointer}.scan-btn.camera{background:var(--wine);border-color:var(--wine);color:#fff}.scan-btn:disabled{opacity:.55;cursor:default}.scan-file{display:none}.scan-result{display:none;grid-template-columns:58px 1fr;gap:11px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid #eadfd6}.scan-result.show{display:grid}.scan-thumb{width:58px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #ded2c8;background:#eee}.scan-status{font-size:11px;font-weight:800;color:#4e3e38;line-height:1.4}.scan-found{margin-top:4px;font-size:10px;color:var(--muted);line-height:1.45}.scan-progress{height:3px;margin-top:8px;overflow:hidden;border-radius:99px;background:#eadfd7}.scan-progress>i{display:block;width:0;height:100%;background:var(--wine);transition:width .2s}.scan-privacy{margin-top:9px;color:#9a8a82;font-size:9.5px;line-height:1.4}
-    .model-toggle{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:#eee7df;border:1px solid #e4d9cf;border-radius:14px;margin:0 0 9px}
-    .model-tab{border:0;background:transparent;color:#84766f;border-radius:10px;padding:11px 10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}
-    .model-tab.active{background:var(--surface);color:var(--wine-deep);box-shadow:0 3px 10px rgba(67,42,32,.08)}
-    .model-caption{text-align:left;color:var(--muted);font-size:11px;margin:0 2px 24px;line-height:1.5}
-    .fields{display:grid;gap:17px}.field label{display:flex;gap:6px;align-items:center;font-weight:800;margin:0 0 8px;font-size:12px;letter-spacing:.01em;color:#4b3d37}
-    .control{width:100%;border-radius:13px;border:1px solid #d9cec4;background:#fffdf9;color:var(--ink);padding:14px 15px;outline:none;transition:.18s;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
-    .control:hover{border-color:#c9b9ab}.control:focus{border-color:var(--wine);box-shadow:0 0 0 3px rgba(91,23,48,.09)}.control::placeholder{color:#aa9d96}select.control option{background:#fff;color:#211916}
-    .our-only{display:none}.our-mode .our-only{display:block}.actions{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:5px}.btn{border-radius:13px;padding:14px 19px;font:inherit;font-weight:850;cursor:pointer;transition:transform .15s,filter .15s}.btn:active{transform:scale(.99)}
-    .primary{border:1px solid var(--wine);background:var(--wine);color:#fffaf6;box-shadow:0 10px 24px rgba(91,23,48,.16)}.primary:hover{filter:brightness(.96)}.secondary{background:transparent;color:#6d5f58;border:1px solid #d7cbc2}
-    .result{display:none;padding:0;margin-top:18px;overflow:hidden}.result.show{display:block;animation:up .28s ease-out}@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    .result>h2{text-align:left;font-family:Georgia,"Times New Roman",serif;font-size:24px;font-weight:500;margin:0;padding:24px 24px 0;color:var(--wine-deep)}
-    .breakdown{margin:18px 24px 0;background:#faf6f1;border:1px solid var(--line);border-radius:18px;padding:18px}.breakdown h3{margin:0 0 5px;font-size:14px}.breakdown-sub{font-size:10.5px;color:var(--muted);margin-bottom:15px;line-height:1.5}
-    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{text-align:left;padding:11px;border-radius:12px;background:var(--surface);border:1px solid #e8dfd7}.metric b{display:block;font-size:19px;margin-bottom:4px;color:var(--wine-deep);font-variant-numeric:tabular-nums}.metric span{display:block;font-size:9.5px;color:var(--muted);line-height:1.25}.metric:nth-child(1) b,.metric:nth-child(2) b,.metric:nth-child(3) b{color:var(--wine-deep)}
-    .grape-box{margin-top:10px;padding:12px 13px;border-radius:12px;background:transparent;border:1px dashed #d9cdc2}.row{display:flex;justify-content:space-between;gap:16px;padding:4px 0;color:var(--muted);font-size:11.5px}.row strong{color:var(--ink)}.note{font-size:10.5px;color:#8b7d76;margin-top:6px;line-height:1.45}
-    .pricebox{text-align:left;margin-top:0;padding:28px 24px 26px;background:linear-gradient(135deg,var(--wine-deep),var(--wine));border:0;color:#fff}.pricebox h3{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:850;margin:0 0 8px;color:#e6cfd6}.price{font-family:Georgia,"Times New Roman",serif;font-size:clamp(50px,11vw,70px);line-height:.98;font-weight:500;letter-spacing:-2.5px;color:#fff9f2;font-variant-numeric:tabular-nums}.summary{margin-top:10px;color:#eadce0;font-size:12px}.model-note{margin:8px 0 0;max-width:560px;color:#cdb7bf;font-size:9.5px;line-height:1.5}
-    .why{margin:0;padding:24px;background:#fffdf9;border-top:1px solid #e8ddd4}.why h3{margin:0 0 4px;font-family:Georgia,"Times New Roman",serif;font-size:22px;font-weight:500;color:var(--wine-deep)}.why-intro{font-size:11px;color:var(--muted);margin-bottom:11px}.clue{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid #eee6df}.clue:first-of-type{border-top:0}.clue-icon{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#f4ece6;font-size:13px}.clue-q{font-size:11.5px;font-weight:800;color:#493a34}.clue-a{font-size:10.5px;color:var(--muted);margin-top:2px}.clue-dir{font-weight:900;color:var(--brass);font-size:14px}
-    .verdict{margin-top:12px;padding:14px;border-radius:13px;background:var(--brass-soft);border:1px solid #e5cfb0;font-size:11px;line-height:1.55;color:#66451e}.formula{margin:0 24px 24px;padding:13px;border-radius:12px;background:#f8f3ed;border:1px solid #ebe1d8;font-size:10px;line-height:1.55;color:#82736c;text-align:left}.formula strong{color:#554640}
-    .regions{margin-top:16px;padding:20px 22px;box-shadow:none;background:rgba(255,253,249,.6)}.regions h3{margin:0 0 5px;font-size:12px;color:#554741}.regions p{font-size:10px;color:#91837c;margin:0 0 12px;line-height:1.45}.region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px 10px;color:#7e7069;font-size:10.5px}.footer{margin-top:16px;text-align:center;color:#968981;font-size:10px;line-height:1.5}
-    .info-trigger{font:inherit;cursor:pointer}.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}.modal-backdrop{position:absolute;inset:0;border:0;background:rgba(36,22,18,.5);backdrop-filter:blur(5px);width:100%;height:100%}.modal-sheet{position:relative;width:min(540px,100%);max-height:78vh;overflow:auto;padding:30px;border:1px solid #dfd3ca;border-radius:22px;background:#fffdf9;box-shadow:0 28px 90px rgba(36,22,18,.24)}.modal-close{position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:50%;border:1px solid #ded4ca;background:#faf5ef;color:var(--ink);font-size:19px}.modal-kicker{color:var(--wine);font-size:9px;font-weight:850;letter-spacing:1.5px}.modal h2{margin:10px 42px 16px 0;font-family:Georgia,"Times New Roman",serif;font-size:28px;font-weight:500;color:var(--wine-deep)}.modal p{color:var(--muted);font-size:13px;line-height:1.7}.modal-boundary{margin-top:18px;padding:14px;border-radius:13px;border:1px solid #e4d0b3;background:var(--brass-soft);color:#66451e;font-size:11px;line-height:1.55}
-    @media(max-width:560px){body{padding:10px 9px 30px}.hero{padding:22px 16px}.brand{padding-right:56px}.wine-icon{width:45px;height:45px}.wine-icon:after{font-size:21px}.brand h1{font-size:39px}.actions{grid-template-columns:1fr}.secondary{order:2}.result>h2{padding:21px 18px 0}.breakdown{margin:15px 18px 0;padding:15px}.pricebox{padding:24px 18px}.why{padding:22px 18px}.formula{margin:0 18px 20px}.metric b{font-size:17px}.region-grid{grid-template-columns:repeat(2,1fr)}.regions{padding:17px 16px}.modal{place-items:end center;padding:0}.modal-sheet{width:100%;max-height:82vh;padding:27px 22px 24px;border-radius:22px 22px 0 0}}
+    body{margin:0;min-height:100vh;padding:0 16px 112px;color:var(--ink);background:linear-gradient(180deg,#faf7f2 0,#f5f1eb 260px);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    button,input,select{font:inherit}.wrap{width:min(680px,100%);margin:auto}.card{background:transparent;border:0;border-radius:0;box-shadow:none}.hero{padding:0}
+    .brand{position:relative;padding:26px 0 22px;border-bottom:1px solid var(--line)}
+    .brand:before{content:'WINE NOTE';display:block;margin-bottom:8px;color:var(--wine);font-size:10px;font-weight:800;letter-spacing:.18em}
+    .wine-icon{display:none}.brand h1{margin:0 0 8px;color:var(--wine-deep);font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;font-size:32px;font-weight:600;line-height:1.15;letter-spacing:-1.2px}
+    .brand p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.tag{display:inline-flex;margin-top:11px;padding:0;border:0;border-bottom:1px solid rgba(100,27,56,.35);background:transparent;color:var(--wine);font-size:11px;font-weight:700;cursor:pointer}
+    .scan-card{margin:22px 0 30px;padding:24px 20px 20px;border:0;border-radius:18px;background:var(--wine-deep);color:#fff}
+    .scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.scan-copy strong{display:block;color:#fffaf5;font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;font-size:24px;font-weight:600;letter-spacing:-.5px}.scan-copy small{display:block;margin-top:6px;color:#d7c5cb;font-size:12px;line-height:1.55}
+    .scan-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}.scan-btn{min-height:48px;padding:0 14px;border:1px solid rgba(255,255,255,.35);border-radius:11px;background:transparent;color:#fffaf5;font-size:13px;font-weight:800;cursor:pointer}.scan-btn.camera{border-color:#fffaf5;background:#fffaf5;color:var(--wine-deep)}.scan-btn:disabled{opacity:.5;cursor:default}.scan-file{display:none}
+    .scan-result{display:none;grid-template-columns:58px 1fr;gap:12px;align-items:center;margin-top:17px;padding-top:17px;border-top:1px solid rgba(255,255,255,.18)}.scan-result.show{display:grid}.scan-thumb{width:58px;height:72px;object-fit:cover;border:1px solid rgba(255,255,255,.28);border-radius:8px;background:#2d1620}.scan-status{color:#fff;font-size:12px;font-weight:800;line-height:1.4}.scan-found{margin-top:4px;color:#d7c5cb;font-size:10.5px;line-height:1.45}.scan-progress{height:2px;margin-top:9px;overflow:hidden;background:rgba(255,255,255,.15)}.scan-progress>i{display:block;width:0;height:100%;background:#d5ae72;transition:width .2s}.scan-privacy{margin-top:11px;color:#ad989f;font-size:9.5px;line-height:1.45}
+    .match-launch{display:none}.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:15px}.section-heading small{display:block;margin-bottom:5px;color:var(--wine);font-size:9px;font-weight:850;letter-spacing:.16em}.section-heading h2{margin:0;font-size:20px;letter-spacing:-.5px}.section-heading p{max-width:270px;margin:0;color:var(--muted);font-size:11px;line-height:1.5;text-align:right}
+    .model-toggle{display:flex;gap:22px;margin:0 0 8px;border-bottom:1px solid var(--line)}.model-tab{position:relative;padding:11px 0 12px;border:0;background:transparent;color:#887c75;font-size:12px;font-weight:800;cursor:pointer}.model-tab.active{color:var(--wine-deep)}.model-tab.active:after{content:'';position:absolute;right:0;bottom:-1px;left:0;height:2px;background:var(--wine)}.model-caption{margin:0 0 22px;color:var(--muted);font-size:10.5px;line-height:1.5}
+    .fields{display:grid;gap:16px}.field label{display:block;margin:0 0 7px;color:#504741;font-size:11.5px;font-weight:800}.control{width:100%;min-height:50px;padding:0 14px;border:1px solid var(--line);border-radius:10px;outline:none;background:rgba(255,253,249,.68);color:var(--ink);transition:border-color .15s,background .15s}.control:hover{border-color:#c3b8ae}.control:focus{border-color:var(--wine);background:var(--surface)}.control::placeholder{color:#aaa099}select.control option{background:#fff;color:#211916}.our-only{display:none}.our-mode .our-only{display:block}
+    .actions{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:4px}.btn{min-height:50px;padding:0 20px;border-radius:10px;font-weight:850;cursor:pointer;transition:transform .15s,background .15s}.btn:active{transform:scale(.99)}.primary{border:1px solid var(--wine);background:var(--wine);color:#fff}.primary:hover{background:#54142f}.secondary{border:0;background:transparent;color:var(--muted)}
+    .result{display:none;margin-top:42px;padding:0;overflow:hidden;border-top:1px solid var(--line)}.result.show{display:block;animation:up .28s ease-out}@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.result>h2{margin:0;padding:26px 0 14px;color:var(--muted);font-size:10px;font-weight:850;letter-spacing:.16em;text-transform:uppercase}
+    .pricebox{margin:0;padding:26px 22px 24px;border:0;border-radius:18px;background:var(--wine-deep);color:#fff;text-align:left}.pricebox h3{margin:0 0 8px;color:#d9c4ca;font-size:9.5px;font-weight:850;letter-spacing:.11em;text-transform:uppercase}.price{color:#fffaf5;font-family:Georgia,"Times New Roman",serif;font-size:clamp(52px,13vw,76px);font-weight:500;line-height:.96;letter-spacing:-2.8px;font-variant-numeric:tabular-nums}.summary{margin-top:12px;color:#eadde1;font-size:12px}.model-note{max-width:580px;margin:8px 0 0;color:#bdaab0;font-size:9.5px;line-height:1.55}
+    .breakdown{margin:24px 0 0;padding:0;border:0;background:transparent}.breakdown h3{margin:0 0 5px;font-size:14px}.breakdown-sub{margin-bottom:14px;color:var(--muted);font-size:10.5px;line-height:1.5}.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.metric{padding:15px 12px;border:0;border-left:1px solid var(--line);border-radius:0;background:transparent}.metric:first-child{border-left:0}.metric b{display:block;margin-bottom:4px;color:var(--wine-deep);font-size:18px;font-variant-numeric:tabular-nums}.metric span{display:block;color:var(--muted);font-size:9.5px;line-height:1.3}.grape-box{margin-top:10px;padding:10px 0;border:0;border-bottom:1px solid var(--line);background:transparent}.row{display:flex;justify-content:space-between;gap:16px;padding:4px 0;color:var(--muted);font-size:11px}.row strong{color:var(--ink)}.note{margin-top:6px;color:#8b7d76;font-size:10px;line-height:1.45}
+    .why{margin:0;padding:30px 0 8px;border:0;background:transparent}.why h3{margin:0 0 4px;color:var(--wine-deep);font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;font-size:24px;font-weight:600}.why-intro{margin-bottom:12px;color:var(--muted);font-size:11px}.clue{display:grid;grid-template-columns:12px 1fr auto;gap:11px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}.clue-icon{display:grid;width:12px;height:12px;place-items:center;font-size:0}.clue-icon:before{content:'';width:5px;height:5px;border-radius:50%;background:var(--brass)}.clue-q{color:#493f3a;font-size:11.5px;font-weight:800}.clue-a{margin-top:2px;color:var(--muted);font-size:10.5px}.clue-dir{color:var(--brass);font-size:14px;font-weight:900}.verdict{margin-top:10px;padding:14px 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;color:#654721;font-size:11px;line-height:1.6}.formula{margin:10px 0 0;padding:14px 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;color:#82756d;font-size:10px;line-height:1.6}.formula strong{color:#554640}
+    .regions{margin-top:30px;padding:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.regions summary{padding:16px 0;color:#564b45;font-size:11px;font-weight:800;cursor:pointer;list-style:none}.regions summary::-webkit-details-marker{display:none}.regions summary:after{content:'+';float:right;color:var(--wine);font-size:16px;font-weight:500}.regions[open] summary:after{content:'–'}.regions-body{padding:0 0 18px}.regions h3{margin:0 0 5px;font-size:12px}.regions p{margin:0 0 12px;color:#91837c;font-size:10px;line-height:1.5}.region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px 10px;color:#7e7069;font-size:10.5px}.footer{margin-top:18px;color:#968981;font-size:9.5px;line-height:1.5;text-align:center}
+    .bottom-nav{position:fixed;z-index:40;right:0;bottom:0;left:0;display:grid;grid-template-columns:1fr 1fr;width:min(680px,100%);height:70px;margin:auto;border-top:1px solid rgba(120,104,94,.2);background:rgba(255,253,249,.94);backdrop-filter:blur(18px);padding-bottom:env(safe-area-inset-bottom)}.bottom-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#8b817a;text-decoration:none;font-size:10px;font-weight:750}.bottom-nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}.bottom-nav a.active{color:var(--wine)}
+    .info-trigger{font:inherit;cursor:pointer}.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}.modal-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(36,22,18,.54);backdrop-filter:blur(5px)}.modal-sheet{position:relative;width:min(520px,100%);max-height:78vh;overflow:auto;padding:30px;border:0;border-radius:18px;background:#fffdf9;box-shadow:0 28px 90px rgba(36,22,18,.24)}.modal-close{position:absolute;top:15px;right:15px;width:34px;height:34px;border:0;border-radius:50%;background:#f1ece6;color:var(--ink);font-size:19px}.modal-kicker{color:var(--wine);font-size:9px;font-weight:850;letter-spacing:1.5px}.modal h2{margin:10px 42px 16px 0;color:var(--wine-deep);font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;font-size:28px;font-weight:600}.modal p{color:var(--muted);font-size:13px;line-height:1.7}.modal-boundary{margin-top:18px;padding:14px;border-left:2px solid var(--brass);background:var(--brass-soft);color:#66451e;font-size:11px;line-height:1.55}
+    @media(min-width:720px){body{padding-top:24px}.wrap{padding:0 24px 60px;background:rgba(255,253,249,.38)}.bottom-nav{border-right:1px solid rgba(120,104,94,.16);border-left:1px solid rgba(120,104,94,.16)}}
+    @media(max-width:560px){body{padding-right:18px;padding-left:18px}.brand{padding-top:22px}.brand h1{font-size:29px}.scan-card{margin-right:-4px;margin-left:-4px;padding:23px 19px 19px}.scan-actions{grid-template-columns:1.15fr .85fr}.section-heading{display:block}.section-heading p{margin-top:6px;text-align:left}.fields{gap:15px}.actions{position:sticky;z-index:20;bottom:76px;margin:4px -8px -4px;padding:8px;border:1px solid rgba(120,104,94,.12);border-radius:14px;background:rgba(255,253,249,.94);backdrop-filter:blur(14px)}.btn{min-height:48px}.result{margin-top:34px}.pricebox{margin-right:-4px;margin-left:-4px;padding:24px 20px}.metrics{grid-template-columns:1fr}.metric{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);border-left:0}.metric:first-child{border-top:0}.metric b{margin:0}.region-grid{grid-template-columns:repeat(2,1fr)}.modal{place-items:end center;padding:0}.modal-sheet{width:100%;max-height:84vh;padding:27px 22px 24px;border-radius:20px 20px 0 0}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
   </style>
   <script defer src="./usage-events.js"></script>
 </head>
@@ -65,7 +53,7 @@
         <div class="scan-copy"><strong id="scanTitle">Identify this wine</strong><small id="scanCopy">Take a photo of the bottle and we’ll fill in what we can.</small></div>
       </div>
       <div class="scan-actions">
-        <button class="scan-btn camera" id="cameraBtn" type="button">📷 Photograph wine</button>
+        <button class="scan-btn camera" id="cameraBtn" type="button">Photograph wine</button>
         <button class="scan-btn" id="galleryBtn" type="button">Choose photo</button>
       </div>
       <input class="scan-file" id="cameraInput" type="file" accept="image/*" capture="environment">
@@ -80,11 +68,10 @@
       </div>
       <div class="scan-privacy" id="scanPrivacy">The photo is analyzed to identify the bottle. Review detected details before estimating.</div>
     </section>
-    <a class="match-launch" href="match.html" id="matchLaunch">
-      <span class="match-launch-icon">💘</span>
-      <span><strong id="matchLaunchTitle">Wine Match</strong><small id="matchLaunchCopy">Find your wine's destiny — just for fun.</small></span>
-      <span class="match-launch-arrow">→</span>
-    </a>
+    <div class="section-heading">
+      <div><small id="manualKicker">MANUAL</small><h2 id="manualTitle">Enter wine details</h2></div>
+      <p id="manualHint">Already know the bottle? Add the details below.</p>
+    </div>
     <div class="model-toggle" role="tablist" aria-label="Pricing model">
       <button class="model-tab active" id="ashTab" type="button">Ash Model</button>
       <button class="model-tab" id="ourTab" type="button">Our Model <span style="opacity:.55">Beta</span></button>
@@ -102,22 +89,27 @@
 
   <section id="result" class="card result" aria-live="polite">
     <h2 id="resultTitle">What the model sees</h2>
+    <div class="pricebox"><h3 id="priceLabel">Prototype-adjusted value signal</h3><div id="price" class="price">—</div><div id="summary" class="summary"></div><div id="modelNote" class="model-note"></div></div>
+
     <div id="ashBreakdown" class="breakdown">
       <h3>Ashenfelter climate inputs</h3><div class="breakdown-sub">Simplified regional climate assumptions adjusted by vintage year for this prototype.</div>
       <div class="metrics"><div class="metric"><b id="winter">—</b><span>Winter Rainfall</span></div><div class="metric"><b id="temp">—</b><span>Growing Season Temp</span></div><div class="metric"><b id="harvest">—</b><span>Harvest Rainfall</span></div></div>
       <div class="grape-box"><div class="row"><span>Original Bordeaux Equation Score</span><strong id="base">—</strong></div><div class="row"><span>Prototype Grape Adjustment</span><strong id="multiplier">—</strong></div><div id="grapeNote" class="note"></div></div>
     </div>
 
-    <div class="pricebox"><h3 id="priceLabel">Prototype-adjusted value signal</h3><div id="price" class="price">—</div><div id="summary" class="summary"></div><div id="modelNote" class="model-note"></div></div>
-
     <div class="why"><h3 id="whyTitle">Why?</h3><div id="whyIntro" class="why-intro"></div><div id="whyClues"></div><div id="verdict" class="verdict"></div></div>
 
     <div id="formula" class="formula"><strong>What is original vs. what is ours?</strong><br>Original idea: winter rainfall + growing-season temperature − harvest rainfall. Prototype extension: apply a grape multiplier and simplified climate assumptions so the interaction works across more regions.</div>
   </section>
 
-  <section class="card regions"><h3>Prototype regions</h3><p>The original Bordeaux Equation was built for Bordeaux; the regions below are experimental extensions in this prototype.</p><div class="region-grid"><div>• Napa Valley</div><div>• Bordeaux</div><div>• Burgundy</div><div>• Tuscany</div><div>• Rioja</div><div>• Barossa Valley</div><div>• Mendoza</div><div>• Willamette Valley</div><div>• Champagne</div><div>• Chianti</div><div>• Douro</div><div>• Mosel</div></div></section>
+  <details class="regions"><summary id="regionsSummary">Method &amp; supported regions</summary><div class="regions-body"><h3>Prototype regions</h3><p>The original Bordeaux Equation was built for Bordeaux; the regions below are experimental extensions in this prototype.</p><div class="region-grid"><div>• Napa Valley</div><div>• Bordeaux</div><div>• Burgundy</div><div>• Tuscany</div><div>• Rioja</div><div>• Barossa Valley</div><div>• Mendoza</div><div>• Willamette Valley</div><div>• Champagne</div><div>• Chianti</div><div>• Douro</div><div>• Mosel</div></div></div></details>
   <div class="footer">Built from a question: how much of wine value can data explain before anyone takes a sip?</div>
 </main>
+
+<nav class="bottom-nav" aria-label="Primary navigation">
+  <a class="active" href="./" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM8 7h8M8 11h5M8 16h8"/></svg><span id="navPrice">Price</span></a>
+  <a href="match.html" id="matchLaunch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.2-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.8-7 10-7 10Z"/></svg><span id="navMatch">Match</span></a>
+</nav>
 
 <div id="originModal" class="modal" hidden><button class="modal-backdrop" type="button" data-modal-close></button><section class="modal-sheet" role="dialog" aria-modal="true" tabindex="-1"><button class="modal-close" type="button" data-modal-close>×</button><div class="modal-kicker">THE IDEA BEHIND IT</div><h2>Can data predict a great vintage?</h2><p>This prototype started with economist Orley Ashenfelter’s research on Bordeaux wines. His model found relationships between auction prices, vintage age, and weather conditions such as winter rain, growing-season temperature, and harvest rain.</p><p>Our newer model asks a different question: what are comparable wines worth in the market, and what makes this bottle different?</p><div class="modal-boundary">Ash Model is a relative signal. Our Model Beta is an experimental fair-value estimate, not a live retail quote, auction result, production cost, or universal “true price.”</div></section></div>
 
@@ -238,16 +230,15 @@ function applyVisionDetails(d){
  if(d.location)$('location').value=d.location;
  const vals=[identity,d.vintage,d.grape,d.location].filter(Boolean);
  const pretty=[identity,d.vintage,d.grape,d.location].filter(Boolean).join(' · ');
- const count=vals.length,pct=Math.round(confidence*100);
- if(!count){
-   setScanState(scanTextIsKo()?'사진에서 신뢰할 만한 정보를 찾지 못했어요. 라벨을 더 가까이 찍어보세요.':'No reliable details found. Try a closer photo of the front label.','',100);
+ const pct=Math.round(confidence*100);
+ if(!vals.length||confidence<.45){
+   setScanState(scanTextIsKo()?'사진만으로 와인을 확실히 식별하지 못했어요. 라벨을 더 가까이 찍어보세요.':'Could not identify this wine reliably. Try a closer photo of the front label.','',100);
    return false;
  }
- if(identity&&confidence>=.45){
-   setScanState(scanTextIsKo()?('와인을 찾았어요 · '+count+'/4개 항목 · 신뢰도 '+pct+'%'):('Wine identified · '+count+'/4 fields · '+pct+'% confidence'),pretty,100);
- }else{
-   setScanState(scanTextIsKo()?('일부 정보를 찾았어요 · '+count+'/4개 항목. 나머지는 직접 확인해 주세요.'):('Found partial details · '+count+'/4 fields. Please review the rest.'),pretty,100);
- }
+ setScanState(
+   scanTextIsKo()?('와인을 찾았어요 · 신뢰도 '+pct+'%'):('Wine identified · '+pct+'% confidence'),
+   pretty,100
+ );
  return true;
 }
 async function imageDataForVision(file){
@@ -273,92 +264,14 @@ async function identifyWineVision(file){
  if(!response.ok)throw new Error(data.error||('Vision request failed: '+response.status));
  return data;
 }
-async function imageCropForOcr(file){
- return new Promise((resolve,reject)=>{
-   const url=URL.createObjectURL(file),img=new Image();
-   img.onload=()=>{
-     try{
-       const sw=img.naturalWidth||img.width,sh=img.naturalHeight||img.height;
-       const sx=Math.round(sw*.08),sy=Math.round(sh*.26),cw=Math.round(sw*.84),ch=Math.round(sh*.66);
-       const targetW=Math.min(1600,Math.max(900,cw*1.8)),scale=targetW/cw,targetH=Math.round(ch*scale);
-       const canvas=document.createElement('canvas');canvas.width=Math.round(targetW);canvas.height=targetH;
-       const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(img,sx,sy,cw,ch,0,0,canvas.width,canvas.height);
-       const imageData=ctx.getImageData(0,0,canvas.width,canvas.height),p=imageData.data;
-       for(let i=0;i<p.length;i+=4){
-         const g=.299*p[i]+.587*p[i+1]+.114*p[i+2];
-         const v=g<128?Math.max(0,(g-128)*1.35+128):Math.min(255,(g-128)*1.18+128);
-         p[i]=p[i+1]=p[i+2]=v;
-       }
-       ctx.putImageData(imageData,0,0);const data=canvas.toDataURL('image/jpeg',.9);URL.revokeObjectURL(url);resolve(data);
-     }catch(e){URL.revokeObjectURL(url);reject(e)}
-   };
-   img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('OCR image decode failed'))};
-   img.src=url;
- });
-}
-async function readLabelOcr(file){
- if(!window.Tesseract)return null;
- setScanState(scanTextIsKo()?'라벨의 빈티지와 글자를 함께 확인하고 있어요…':'Checking the label text and vintage…','',28);
- let source=file;
- try{source=await imageCropForOcr(file)}catch(e){console.warn('OCR crop failed; using original image',e)}
- const result=await Tesseract.recognize(source,'eng',{logger:m=>{if(m.status==='recognizing text'){const p=Math.round((m.progress||0)*100);setScanState(scanTextIsKo()?('라벨 글자를 확인하고 있어요… '+p+'%'):('Checking label text… '+p+'%'),'',Math.max(30,p));}}});
- return extractLabelDetails(result?.data?.text||'',Number(result?.data?.confidence||0));
-}
-async function imageCropForVintage(file){
- return new Promise((resolve,reject)=>{
-   const url=URL.createObjectURL(file),img=new Image();
-   img.onload=()=>{
-     try{
-       const sw=img.naturalWidth||img.width,sh=img.naturalHeight||img.height;
-       const sx=Math.round(sw*.12),sy=Math.round(sh*.45),cw=Math.round(sw*.76),ch=Math.round(sh*.38);
-       const targetW=1200,scale=targetW/cw,targetH=Math.round(ch*scale);
-       const canvas=document.createElement('canvas');canvas.width=targetW;canvas.height=targetH;
-       const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(img,sx,sy,cw,ch,0,0,canvas.width,canvas.height);
-       const imageData=ctx.getImageData(0,0,canvas.width,canvas.height),p=imageData.data;
-       for(let i=0;i<p.length;i+=4){
-         const g=.299*p[i]+.587*p[i+1]+.114*p[i+2];
-         const v=g<195?0:255;p[i]=p[i+1]=p[i+2]=v;
-       }
-       ctx.putImageData(imageData,0,0);
-       const data=canvas.toDataURL('image/png');URL.revokeObjectURL(url);resolve(data);
-     }catch(e){URL.revokeObjectURL(url);reject(e)}
-   };
-   img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Vintage image decode failed'))};
-   img.src=url;
- });
-}
-async function readVintageOcr(file){
- if(!window.Tesseract)return '';
- try{
-   setScanState(scanTextIsKo()?'빈티지 숫자를 한 번 더 확인하고 있어요…':'Double-checking the vintage year…','',74);
-   const source=await imageCropForVintage(file);
-   const result=await Tesseract.recognize(
-     source,
-     'eng',
-     {},
-     {tessedit_char_whitelist:'0123456789'}
-   );
-   const currentYear=new Date().getFullYear();
-   const years=[...(result?.data?.text||'').matchAll(/\b(19\d{2}|20\d{2})\b/g)]
-     .map(m=>Number(m[1]))
-     .filter(y=>y>=1900&&y<=currentYear);
-   return years.length?String(years[0]):'';
- }catch(e){
-   console.warn('Vintage OCR failed',e);return '';
- }
-}
-function mergeDetectedDetails(vision,ocr){
- const v=vision||{},o=ocr||{};
- return {
-   producer:v.producer||null,
-   wine:v.wine||o.wine||null,
-   vintage:v.vintage||((o.vintage&&Number(o.vintage))||null),
-   grape:v.grape||o.grape||null,
-   location:v.location||o.location||null,
-   country:v.country||null,
-   confidence:Number(v.confidence)||0,
-   reason:v.reason||''
- };
+async function fallbackLabelOcr(file){
+ if(!window.Tesseract)return false;
+ setScanState(scanTextIsKo()?'라벨 글자를 한 번 더 읽어볼게요…':'Trying label text as a fallback…','',12);
+ const result=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text'){const p=Math.round((m.progress||0)*100);setScanState(scanTextIsKo()?('라벨 글자를 읽고 있어요… '+p+'%'):('Reading label text… '+p+'%'),'',Math.max(15,p));}}});
+ const details=extractLabelDetails(result?.data?.text||'',Number(result?.data?.confidence||0));
+ const hasAny=[details.wine,details.vintage,details.grape,details.location].some(Boolean);
+ if(hasAny){applyLabelDetails(details);return true}
+ return false;
 }
 async function readWineLabel(file){
  if(!file)return;
@@ -366,20 +279,17 @@ async function readWineLabel(file){
  $('cameraBtn').disabled=true;$('galleryBtn').disabled=true;
  setScanState(scanTextIsKo()?'사진에서 와인을 찾고 있어요…':'Identifying the wine from the photo…','',18);
  try{
-   let vision=null,ocr=null;
-   try{vision=await identifyWineVision(file)}catch(visionError){console.warn('Vision identification failed',visionError)}
-   const identity=vision&&(vision.producer||vision.wine);
-   const needsSupplement=!identity||!vision?.vintage||!vision?.grape||!vision?.location;
-   if(needsSupplement){
-     try{ocr=await readLabelOcr(file)}catch(ocrError){console.warn('OCR supplement failed',ocrError)}
+   let identified=false;
+   try{
+     const vision=await identifyWineVision(file);
+     identified=applyVisionDetails(vision);
+   }catch(visionError){
+     console.warn('Vision identification failed; falling back to OCR',visionError);
    }
-   if(!vision?.vintage&&!ocr?.vintage){
-     const vintage=await readVintageOcr(file);
-     if(vintage)ocr={...(ocr||{}),vintage};
+   if(!identified){
+     const fallbackWorked=await fallbackLabelOcr(file);
+     if(!fallbackWorked)setScanState(scanTextIsKo()?'와인을 식별하지 못했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Could not identify the wine. Retake the photo with the front label filling the frame.','',100);
    }
-   const merged=mergeDetectedDetails(vision,ocr);
-   const found=applyVisionDetails(merged);
-   if(!found)setScanState(scanTextIsKo()?'와인을 식별하지 못했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Could not identify the wine. Retake the photo with the front label filling the frame.','',100);
  }catch(e){
    console.error('Wine scan failed',e);setScanState(scanTextIsKo()?'인식에 실패했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Couldn’t identify this wine. Retake the photo with the label filling the frame.','',0);
  }finally{$('cameraBtn').disabled=false;$('galleryBtn').disabled=false;$('cameraInput').value='';$('galleryInput').value=''}
@@ -438,7 +348,8 @@ $('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[da
   const set=(s,t)=>{const e=qs(s);if(e)e.textContent=t};
   set('.brand h1','와인 가격 계산기');set('.brand p','같은 한 병을 두 가지 방식으로 바라봅니다.');set('#originOpen','왜 Freakonomics일까요? ↗');
   set('#matchLaunchTitle','와인 궁합');set('#matchLaunchCopy','이 와인과 운명인 메뉴 찾기 · 재미로만 봐요');
-  set('#scanTitle','와인 사진 찍기');set('#scanCopy','병을 찍으면 와인을 찾아 정보를 자동으로 채워드려요.');set('#cameraBtn','📷 와인 찍기');set('#galleryBtn','사진 선택');set('#scanPrivacy','사진을 분석해 와인을 식별합니다. 추정 전에 자동 입력된 정보를 확인해 주세요.');
+  set('#scanTitle','라벨로 와인 찾기');set('#scanCopy','앞 라벨을 찍으면 와인 정보를 찾아 자동으로 채워드려요.');set('#cameraBtn','라벨 촬영');set('#galleryBtn','사진 선택');set('#scanPrivacy','사진을 분석해 와인을 식별합니다. 추정 전에 자동 입력된 정보를 확인해 주세요.');
+  set('#manualKicker','직접 입력');set('#manualTitle','와인 정보 입력');set('#manualHint','와인을 알고 있다면 아래 정보만 입력하세요.');set('#regionsSummary','계산 방법과 지원 지역');set('#navPrice','가격');set('#navMatch','궁합');
   $('ashTab').textContent='Ash 모델';$('ourTab').innerHTML='우리 모델 <span style="opacity:.55">Beta</span>';
   const labels={vintage:'빈티지 연도',grape:'포도 품종',location:'와이너리 지역',wine:'와인 / 생산자',bottle:'병 용량'};
   Object.entries(labels).forEach(([id,t])=>{const e=qs(`label[for="${id}"]`);if(e)e.textContent=t});
