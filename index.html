@@ -28,7 +28,6 @@
     .match-launch{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin:0 0 22px;padding:13px 14px;border-radius:16px;border:1px solid var(--line);background:#faf6f1;color:var(--ink);text-decoration:none;transition:.18s}
     .match-launch:hover{border-color:#cbb9aa;background:#fffaf4;transform:translateY(-1px)}
     .match-launch-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--wine-soft);font-size:18px}.match-launch strong{display:block;font-size:13px;color:var(--wine-deep)}.match-launch small{display:block;margin-top:3px;color:var(--muted);font-size:10.5px;line-height:1.35}.match-launch-arrow{color:var(--wine);font-size:17px}
-    .scan-card{margin:0 0 14px;padding:16px;border:1px solid #d9cec4;border-radius:18px;background:#fffaf5}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.scan-copy strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:18px;font-weight:500;color:var(--wine-deep)}.scan-copy small{display:block;margin-top:4px;color:var(--muted);font-size:10.5px;line-height:1.45}.scan-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.scan-btn{border-radius:12px;padding:12px 11px;border:1px solid #d4c5ba;background:var(--surface);color:#55443d;font-size:12px;font-weight:850;cursor:pointer}.scan-btn.camera{background:var(--wine);border-color:var(--wine);color:#fff}.scan-btn:disabled{opacity:.55;cursor:default}.scan-file{display:none}.scan-result{display:none;grid-template-columns:58px 1fr;gap:11px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid #eadfd6}.scan-result.show{display:grid}.scan-thumb{width:58px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #ded2c8;background:#eee}.scan-status{font-size:11px;font-weight:800;color:#4e3e38;line-height:1.4}.scan-found{margin-top:4px;font-size:10px;color:var(--muted);line-height:1.45}.scan-progress{height:3px;margin-top:8px;overflow:hidden;border-radius:99px;background:#eadfd7}.scan-progress>i{display:block;width:0;height:100%;background:var(--wine);transition:width .2s}.scan-privacy{margin-top:9px;color:#9a8a82;font-size:9.5px;line-height:1.4}
     .model-toggle{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:#eee7df;border:1px solid #e4d9cf;border-radius:14px;margin:0 0 9px}
     .model-tab{border:0;background:transparent;color:#84766f;border-radius:10px;padding:11px 10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}
     .model-tab.active{background:var(--surface);color:var(--wine-deep);box-shadow:0 3px 10px rgba(67,42,32,.08)}
@@ -60,26 +59,6 @@
       <p>Two ways to look at the same bottle.</p>
       <button id="originOpen" class="tag info-trigger" type="button">Why Freakonomics? ↗</button>
     </div>
-    <section class="scan-card" id="scanCard">
-      <div class="scan-head">
-        <div class="scan-copy"><strong id="scanTitle">Identify this wine</strong><small id="scanCopy">Take a photo of the bottle and we’ll fill in what we can.</small></div>
-      </div>
-      <div class="scan-actions">
-        <button class="scan-btn camera" id="cameraBtn" type="button">📷 Photograph wine</button>
-        <button class="scan-btn" id="galleryBtn" type="button">Choose photo</button>
-      </div>
-      <input class="scan-file" id="cameraInput" type="file" accept="image/*" capture="environment">
-      <input class="scan-file" id="galleryInput" type="file" accept="image/*">
-      <div class="scan-result" id="scanResult">
-        <img class="scan-thumb" id="scanThumb" alt="">
-        <div>
-          <div class="scan-status" id="scanStatus">Reading the label…</div>
-          <div class="scan-found" id="scanFound"></div>
-          <div class="scan-progress" aria-hidden="true"><i id="scanProgress"></i></div>
-        </div>
-      </div>
-      <div class="scan-privacy" id="scanPrivacy">The photo is analyzed to identify the bottle. Review detected details before estimating.</div>
-    </section>
     <a class="match-launch" href="match.html" id="matchLaunch">
       <span class="match-launch-icon">💘</span>
       <span><strong id="matchLaunchTitle">Wine Match</strong><small id="matchLaunchCopy">Find your wine's destiny — just for fun.</small></span>
@@ -121,7 +100,6 @@
 
 <div id="originModal" class="modal" hidden><button class="modal-backdrop" type="button" data-modal-close></button><section class="modal-sheet" role="dialog" aria-modal="true" tabindex="-1"><button class="modal-close" type="button" data-modal-close>×</button><div class="modal-kicker">THE IDEA BEHIND IT</div><h2>Can data predict a great vintage?</h2><p>This prototype started with economist Orley Ashenfelter’s research on Bordeaux wines. His model found relationships between auction prices, vintage age, and weather conditions such as winter rain, growing-season temperature, and harvest rain.</p><p>Our newer model asks a different question: what are comparable wines worth in the market, and what makes this bottle different?</p><div class="modal-boundary">Ash Model is a relative signal. Our Model Beta is an experimental fair-value estimate, not a live retail quote, auction result, production cost, or universal “true price.”</div></section></div>
 
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 const grapeMultipliers={
  'pinot noir':{multiplier:1.15,notes:'Prototype adjustment: high-sensitivity, high-value variety'},
@@ -148,166 +126,11 @@ const regionalPatterns={
 const $=id=>document.getElementById(id); let mode='ash';
 const getWeatherVariation=(baseValue,vintage)=>{const currentYear=new Date().getFullYear();const yearDiff=currentYear-parseInt(vintage,10);const randomFactor=(Math.sin(parseInt(vintage,10)*.1)*.15)+1;return baseValue*randomFactor*(1+(yearDiff*.002));};
 function getRegion(location){const key=location.toLowerCase();for(const region in regionalPatterns){if(key.includes(region)||region.includes(key))return {name:region,...regionalPatterns[region]};}return {name:'other region',winterRainfall:600,avgGrowingTemp:19,harvestRainfall:60,anchor:40};}
-const scanRegions=[
- {value:'Napa Valley',aliases:['napa valley','napa']},{value:'Bordeaux',aliases:['bordeaux']},{value:'Burgundy',aliases:['burgundy','bourgogne']},
- {value:'Tuscany',aliases:['tuscany','toscana']},{value:'Rioja',aliases:['rioja']},{value:'Barossa Valley',aliases:['barossa valley','barossa']},
- {value:'Mendoza',aliases:['mendoza']},{value:'Willamette Valley',aliases:['willamette valley','willamette']},{value:'Champagne',aliases:['champagne']},
- {value:'Chianti',aliases:['chianti']},{value:'Douro',aliases:['douro']},{value:'Mosel',aliases:['mosel']}
-];
-const scanGrapes=[
- {value:'cabernet sauvignon',aliases:['cabernet sauvignon','cab sauvignon','cabernet']},{value:'pinot noir',aliases:['pinot noir']},
- {value:'syrah',aliases:['syrah','shiraz']},{value:'malbec',aliases:['malbec']},{value:'chardonnay',aliases:['chardonnay']},{value:'riesling',aliases:['riesling']}
-];
-let scanObjectUrl='';
-function scanTextIsKo(){return (document.documentElement.lang||navigator.language||'').toLowerCase().startsWith('ko')}
-function setScanState(status,found='',progress=0){
- $('scanResult').classList.add('show');$('scanStatus').textContent=status;$('scanFound').textContent=found;$('scanProgress').style.width=Math.max(0,Math.min(100,progress))+'%';
-}
-function plausibleWineLine(line){
- const clean=(line||'').replace(/\s+/g,' ').trim();
- if(clean.length<4||clean.length>48)return false;
- const letters=(clean.match(/[A-Za-zÀ-ÿ]/g)||[]).length;
- const digits=(clean.match(/\d/g)||[]).length;
- const tokens=clean.split(' ').filter(Boolean);
- const singleLetterTokens=tokens.filter(t=>/^[A-Za-zÀ-ÿ]$/.test(t)).length;
- const longWord=tokens.some(t=>(t.match(/[A-Za-zÀ-ÿ]/g)||[]).length>=4);
- const alphaNum=letters+digits;
- if(letters<5||!longWord||singleLetterTokens>0)return false;
- if(digits>1)return false;
- if(alphaNum&&letters/alphaNum<.78)return false;
- if(/^[^A-Za-zÀ-ÿ]*$/.test(clean))return false;
- return true;
-}
-function extractLabelDetails(raw,ocrConfidence=0){
- const text=(raw||'').replace(/[|]/g,'I'),lower=text.toLowerCase(),currentYear=new Date().getFullYear();
- const years=[...text.matchAll(/\b(19\d{2}|20\d{2})\b/g)].map(m=>Number(m[1])).filter(y=>y>=1900&&y<=currentYear);
- const vintage=years.length?String(years[0]):'';
- const grapeMatch=scanGrapes.find(g=>g.aliases.some(a=>lower.includes(a)));
- const regionMatch=scanRegions.find(r=>r.aliases.some(a=>lower.includes(a)));
- const lines=text.split(/\n+/).map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean);
- const blocked=['appellation','contains sulfites','contains sulphites','product of','alcohol','alc.','750 ml','750ml','mis en bouteille','bottled by','imported by','reserve','reserva'];
- const candidates=lines.filter(line=>{
-   const l=line.toLowerCase();
-   if(!plausibleWineLine(line))return false;
-   if(vintage&&l.includes(vintage))return false;
-   if(blocked.some(w=>l.includes(w)))return false;
-   if(grapeMatch&&grapeMatch.aliases.some(a=>l.includes(a)))return false;
-   if(regionMatch&&regionMatch.aliases.some(a=>l.includes(a)))return false;
-   return true;
- });
- const wine=ocrConfidence>=55?candidates.slice(0,2).join(' · ').slice(0,80):'';
- return {wine,vintage,grape:grapeMatch?.value||'',location:regionMatch?.value||'',confidence:ocrConfidence};
-}
-function applyLabelDetails(d){
- setMode('our');
- if(d.wine)$('wine').value=d.wine;if(d.vintage)$('vintage').value=d.vintage;if(d.grape)$('grape').value=d.grape;if(d.location)$('location').value=d.location;
- const vals=[d.wine,d.vintage,d.grape,d.location].filter(Boolean);
- const pretty=[d.wine,d.vintage,d.grape&&$('grape').selectedOptions[0]?.textContent,d.location].filter(Boolean).join(' · ');
- const count=vals.length;
- if(!count){
-   setScanState(scanTextIsKo()?'신뢰할 만한 정보를 찾지 못했어요. 더 가까이, 정면에서 다시 찍거나 직접 입력해 주세요.':'No reliable label details found. Try a closer, straight-on photo or enter the details manually.','',100);
-   return;
- }
- setScanState(scanTextIsKo()?('라벨에서 '+count+'/4개 항목을 찾았어요. 자동 입력값을 확인해 주세요.'):('Found '+count+'/4 fields. Review the autofilled details.'),pretty,100);
-}
-function normalizeDetectedGrape(raw){
- const name=(raw||'').trim();
- if(!name)return '';
- const key=name.toLowerCase().replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim();
- const aliases={
-  'cabernet sauvignon':'cabernet sauvignon','cab sauvignon':'cabernet sauvignon','cabernet':'cabernet sauvignon',
-  'pinot noir':'pinot noir','syrah':'syrah','shiraz':'syrah','malbec':'malbec','chardonnay':'chardonnay','riesling':'riesling'
- };
- const value=aliases[key]||key;
- if(!value)return '';
- if(![...$('grape').options].some(o=>o.value===value)){
-   const option=document.createElement('option');option.value=value;option.textContent=name;$('grape').appendChild(option);
- }
- return value;
-}
-function clearDetectedFields(){
- $('wine').value='';$('vintage').value='';$('grape').value='';$('location').value='';
-}
-function applyVisionDetails(d){
- setMode('our');clearDetectedFields();
- const confidence=Math.max(0,Math.min(1,Number(d.confidence)||0));
- const identity=[d.producer,d.wine].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(' · ');
- if(identity)$('wine').value=identity;
- if(d.vintage)$('vintage').value=String(d.vintage);
- const grapeValue=normalizeDetectedGrape(d.grape);if(grapeValue)$('grape').value=grapeValue;
- if(d.location)$('location').value=d.location;
- const vals=[identity,d.vintage,d.grape,d.location].filter(Boolean);
- const pretty=[identity,d.vintage,d.grape,d.location].filter(Boolean).join(' · ');
- const pct=Math.round(confidence*100);
- if(!vals.length||confidence<.45){
-   setScanState(scanTextIsKo()?'사진만으로 와인을 확실히 식별하지 못했어요. 라벨을 더 가까이 찍어보세요.':'Could not identify this wine reliably. Try a closer photo of the front label.','',100);
-   return false;
- }
- setScanState(
-   scanTextIsKo()?('와인을 찾았어요 · 신뢰도 '+pct+'%'):('Wine identified · '+pct+'% confidence'),
-   pretty,100
- );
- return true;
-}
-async function imageDataForVision(file){
- return new Promise((resolve,reject)=>{
-   const url=URL.createObjectURL(file),img=new Image();
-   img.onload=()=>{
-     try{
-       const max=1400,scale=Math.min(1,max/Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height));
-       const w=Math.max(1,Math.round((img.naturalWidth||img.width)*scale)),h=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));
-       const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
-       canvas.getContext('2d',{alpha:false}).drawImage(img,0,0,w,h);
-       const data=canvas.toDataURL('image/jpeg',.82);URL.revokeObjectURL(url);resolve(data);
-     }catch(e){URL.revokeObjectURL(url);reject(e)}
-   };
-   img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Image decode failed'))};
-   img.src=url;
- });
-}
-async function identifyWineVision(file){
- const image=await imageDataForVision(file);
- const response=await fetch('/api/identify-wine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image})});
- const data=await response.json().catch(()=>({}));
- if(!response.ok)throw new Error(data.error||('Vision request failed: '+response.status));
- return data;
-}
-async function fallbackLabelOcr(file){
- if(!window.Tesseract)return false;
- setScanState(scanTextIsKo()?'라벨 글자를 한 번 더 읽어볼게요…':'Trying label text as a fallback…','',12);
- const result=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text'){const p=Math.round((m.progress||0)*100);setScanState(scanTextIsKo()?('라벨 글자를 읽고 있어요… '+p+'%'):('Reading label text… '+p+'%'),'',Math.max(15,p));}}});
- const details=extractLabelDetails(result?.data?.text||'',Number(result?.data?.confidence||0));
- const hasAny=[details.wine,details.vintage,details.grape,details.location].some(Boolean);
- if(hasAny){applyLabelDetails(details);return true}
- return false;
-}
-async function readWineLabel(file){
- if(!file)return;
- if(scanObjectUrl)URL.revokeObjectURL(scanObjectUrl);scanObjectUrl=URL.createObjectURL(file);$('scanThumb').src=scanObjectUrl;
- $('cameraBtn').disabled=true;$('galleryBtn').disabled=true;
- setScanState(scanTextIsKo()?'사진에서 와인을 찾고 있어요…':'Identifying the wine from the photo…','',18);
- try{
-   let identified=false;
-   try{
-     const vision=await identifyWineVision(file);
-     identified=applyVisionDetails(vision);
-   }catch(visionError){
-     console.warn('Vision identification failed; falling back to OCR',visionError);
-   }
-   if(!identified){
-     const fallbackWorked=await fallbackLabelOcr(file);
-     if(!fallbackWorked)setScanState(scanTextIsKo()?'와인을 식별하지 못했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Could not identify the wine. Retake the photo with the front label filling the frame.','',100);
-   }
- }catch(e){
-   console.error('Wine scan failed',e);setScanState(scanTextIsKo()?'인식에 실패했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Couldn’t identify this wine. Retake the photo with the label filling the frame.','',0);
- }finally{$('cameraBtn').disabled=false;$('galleryBtn').disabled=false;$('cameraInput').value='';$('galleryInput').value=''}
-}
 function clue(icon,q,a,dir=''){return `<div class="clue"><div class="clue-icon">${icon}</div><div><div class="clue-q">${q}</div><div class="clue-a">${a}</div></div><div class="clue-dir">${dir}</div></div>`}
 function setMode(next){
  mode=next;$('hero').classList.toggle('our-mode',mode==='our');$('ashTab').classList.toggle('active',mode==='ash');$('ourTab').classList.toggle('active',mode==='our');
- const ko=scanTextIsKo();
- $('modelCaption').textContent=ko?(mode==='ash'?'Ash의 질문: “이 빈티지의 날씨는 어땠을까?”':'우리 모델의 질문: “비슷한 와인은 얼마이고, 이 병은 무엇이 다를까?”'):(mode==='ash'?'Ash asks: “What did the weather say about this vintage?”':'Our model asks: “What are similar wines worth — and what makes this bottle different?”');
- $('calculate').textContent=ko?(mode==='ash'?'방정식 계산하기':'적정가 추정하기'):(mode==='ash'?'Run the Equation':'Estimate Fair Value');$('result').classList.remove('show');
+ $('modelCaption').textContent=mode==='ash'?'Ash asks: “What did the weather say about this vintage?”':'Our model asks: “What are similar wines worth — and what makes this bottle different?”';
+ $('calculate').textContent=mode==='ash'?'Run the Equation':'Estimate Fair Value';$('result').classList.remove('show');
 }
 function validate(){
  const vintage=$('vintage').value.trim(),location=$('location').value.trim(),grape=$('grape').value;
@@ -343,9 +166,9 @@ function calculateOur(v){
  $('formula').style.display='none';
 }
 function calculate(){const v=validate();if(!v)return;mode==='ash'?calculateAsh(v):calculateOur(v);$('result').classList.add('show');setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),30)}
-function reset(){['vintage','location','wine'].forEach(id=>$(id).value='');$('grape').value='';$('bottle').value='750';$('result').classList.remove('show');$('scanResult').classList.remove('show');$('scanFound').textContent='';$('scanProgress').style.width='0%';if(scanObjectUrl){URL.revokeObjectURL(scanObjectUrl);scanObjectUrl=''}window.scrollTo({top:0,behavior:'smooth'})}
+function reset(){['vintage','location','wine'].forEach(id=>$(id).value='');$('grape').value='';$('bottle').value='750';$('result').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'})}
 const modal=$('originModal');function openOrigin(){modal.hidden=false;document.body.style.overflow='hidden'}function closeOrigin(){modal.hidden=true;document.body.style.overflow=''}
-$('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[data-modal-close]').forEach(el=>el.addEventListener('click',closeOrigin));$('calculate').addEventListener('click',calculate);$('reset').addEventListener('click',reset);$('ashTab').addEventListener('click',()=>setMode('ash'));$('ourTab').addEventListener('click',()=>setMode('our'));$('cameraBtn').addEventListener('click',()=>$('cameraInput').click());$('galleryBtn').addEventListener('click',()=>$('galleryInput').click());$('cameraInput').addEventListener('change',e=>readWineLabel(e.target.files?.[0]));$('galleryInput').addEventListener('change',e=>readWineLabel(e.target.files?.[0]));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeOrigin();if(e.key==='Enter'&&modal.hidden&&e.target.tagName!=='BUTTON')calculate()});
+$('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[data-modal-close]').forEach(el=>el.addEventListener('click',closeOrigin));$('calculate').addEventListener('click',calculate);$('reset').addEventListener('click',reset);$('ashTab').addEventListener('click',()=>setMode('ash'));$('ourTab').addEventListener('click',()=>setMode('our'));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeOrigin();if(e.key==='Enter'&&modal.hidden&&e.target.tagName!=='BUTTON')calculate()});
 </script>
 <script>
 (() => {
@@ -356,7 +179,6 @@ $('originOpen').addEventListener('click',openOrigin);modal.querySelectorAll('[da
   const set=(s,t)=>{const e=qs(s);if(e)e.textContent=t};
   set('.brand h1','와인 가격 계산기');set('.brand p','같은 한 병을 두 가지 방식으로 바라봅니다.');set('#originOpen','왜 Freakonomics일까요? ↗');
   set('#matchLaunchTitle','와인 궁합');set('#matchLaunchCopy','이 와인과 운명인 메뉴 찾기 · 재미로만 봐요');
-  set('#scanTitle','와인 사진 찍기');set('#scanCopy','병을 찍으면 와인을 찾아 정보를 자동으로 채워드려요.');set('#cameraBtn','📷 와인 찍기');set('#galleryBtn','사진 선택');set('#scanPrivacy','사진을 분석해 와인을 식별합니다. 추정 전에 자동 입력된 정보를 확인해 주세요.');
   $('ashTab').textContent='Ash 모델';$('ourTab').innerHTML='우리 모델 <span style="opacity:.55">Beta</span>';
   const labels={vintage:'빈티지 연도',grape:'포도 품종',location:'와이너리 지역',wine:'와인 / 생산자',bottle:'병 용량'};
   Object.entries(labels).forEach(([id,t])=>{const e=qs(`label[for="${id}"]`);if(e)e.textContent=t});
