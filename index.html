@@ -238,15 +238,16 @@ function applyVisionDetails(d){
  if(d.location)$('location').value=d.location;
  const vals=[identity,d.vintage,d.grape,d.location].filter(Boolean);
  const pretty=[identity,d.vintage,d.grape,d.location].filter(Boolean).join(' · ');
- const pct=Math.round(confidence*100);
- if(!vals.length||confidence<.45){
-   setScanState(scanTextIsKo()?'사진만으로 와인을 확실히 식별하지 못했어요. 라벨을 더 가까이 찍어보세요.':'Could not identify this wine reliably. Try a closer photo of the front label.','',100);
+ const count=vals.length,pct=Math.round(confidence*100);
+ if(!count){
+   setScanState(scanTextIsKo()?'사진에서 신뢰할 만한 정보를 찾지 못했어요. 라벨을 더 가까이 찍어보세요.':'No reliable details found. Try a closer photo of the front label.','',100);
    return false;
  }
- setScanState(
-   scanTextIsKo()?('와인을 찾았어요 · 신뢰도 '+pct+'%'):('Wine identified · '+pct+'% confidence'),
-   pretty,100
- );
+ if(identity&&confidence>=.45){
+   setScanState(scanTextIsKo()?('와인을 찾았어요 · '+count+'/4개 항목 · 신뢰도 '+pct+'%'):('Wine identified · '+count+'/4 fields · '+pct+'% confidence'),pretty,100);
+ }else{
+   setScanState(scanTextIsKo()?('일부 정보를 찾았어요 · '+count+'/4개 항목. 나머지는 직접 확인해 주세요.'):('Found partial details · '+count+'/4 fields. Please review the rest.'),pretty,100);
+ }
  return true;
 }
 async function imageDataForVision(file){
@@ -272,14 +273,49 @@ async function identifyWineVision(file){
  if(!response.ok)throw new Error(data.error||('Vision request failed: '+response.status));
  return data;
 }
-async function fallbackLabelOcr(file){
- if(!window.Tesseract)return false;
- setScanState(scanTextIsKo()?'라벨 글자를 한 번 더 읽어볼게요…':'Trying label text as a fallback…','',12);
- const result=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text'){const p=Math.round((m.progress||0)*100);setScanState(scanTextIsKo()?('라벨 글자를 읽고 있어요… '+p+'%'):('Reading label text… '+p+'%'),'',Math.max(15,p));}}});
- const details=extractLabelDetails(result?.data?.text||'',Number(result?.data?.confidence||0));
- const hasAny=[details.wine,details.vintage,details.grape,details.location].some(Boolean);
- if(hasAny){applyLabelDetails(details);return true}
- return false;
+async function imageCropForOcr(file){
+ return new Promise((resolve,reject)=>{
+   const url=URL.createObjectURL(file),img=new Image();
+   img.onload=()=>{
+     try{
+       const sw=img.naturalWidth||img.width,sh=img.naturalHeight||img.height;
+       const sx=Math.round(sw*.08),sy=Math.round(sh*.26),cw=Math.round(sw*.84),ch=Math.round(sh*.66);
+       const targetW=Math.min(1600,Math.max(900,cw*1.8)),scale=targetW/cw,targetH=Math.round(ch*scale);
+       const canvas=document.createElement('canvas');canvas.width=Math.round(targetW);canvas.height=targetH;
+       const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(img,sx,sy,cw,ch,0,0,canvas.width,canvas.height);
+       const imageData=ctx.getImageData(0,0,canvas.width,canvas.height),p=imageData.data;
+       for(let i=0;i<p.length;i+=4){
+         const g=.299*p[i]+.587*p[i+1]+.114*p[i+2];
+         const v=g<128?Math.max(0,(g-128)*1.35+128):Math.min(255,(g-128)*1.18+128);
+         p[i]=p[i+1]=p[i+2]=v;
+       }
+       ctx.putImageData(imageData,0,0);const data=canvas.toDataURL('image/jpeg',.9);URL.revokeObjectURL(url);resolve(data);
+     }catch(e){URL.revokeObjectURL(url);reject(e)}
+   };
+   img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('OCR image decode failed'))};
+   img.src=url;
+ });
+}
+async function readLabelOcr(file){
+ if(!window.Tesseract)return null;
+ setScanState(scanTextIsKo()?'라벨의 빈티지와 글자를 함께 확인하고 있어요…':'Checking the label text and vintage…','',28);
+ let source=file;
+ try{source=await imageCropForOcr(file)}catch(e){console.warn('OCR crop failed; using original image',e)}
+ const result=await Tesseract.recognize(source,'eng',{logger:m=>{if(m.status==='recognizing text'){const p=Math.round((m.progress||0)*100);setScanState(scanTextIsKo()?('라벨 글자를 확인하고 있어요… '+p+'%'):('Checking label text… '+p+'%'),'',Math.max(30,p));}}});
+ return extractLabelDetails(result?.data?.text||'',Number(result?.data?.confidence||0));
+}
+function mergeDetectedDetails(vision,ocr){
+ const v=vision||{},o=ocr||{};
+ return {
+   producer:v.producer||null,
+   wine:v.wine||o.wine||null,
+   vintage:v.vintage||((o.vintage&&Number(o.vintage))||null),
+   grape:v.grape||o.grape||null,
+   location:v.location||o.location||null,
+   country:v.country||null,
+   confidence:Number(v.confidence)||0,
+   reason:v.reason||''
+ };
 }
 async function readWineLabel(file){
  if(!file)return;
@@ -287,17 +323,16 @@ async function readWineLabel(file){
  $('cameraBtn').disabled=true;$('galleryBtn').disabled=true;
  setScanState(scanTextIsKo()?'사진에서 와인을 찾고 있어요…':'Identifying the wine from the photo…','',18);
  try{
-   let identified=false;
-   try{
-     const vision=await identifyWineVision(file);
-     identified=applyVisionDetails(vision);
-   }catch(visionError){
-     console.warn('Vision identification failed; falling back to OCR',visionError);
+   let vision=null,ocr=null;
+   try{vision=await identifyWineVision(file)}catch(visionError){console.warn('Vision identification failed',visionError)}
+   const identity=vision&&(vision.producer||vision.wine);
+   const needsSupplement=!identity||!vision?.vintage||!vision?.grape||!vision?.location;
+   if(needsSupplement){
+     try{ocr=await readLabelOcr(file)}catch(ocrError){console.warn('OCR supplement failed',ocrError)}
    }
-   if(!identified){
-     const fallbackWorked=await fallbackLabelOcr(file);
-     if(!fallbackWorked)setScanState(scanTextIsKo()?'와인을 식별하지 못했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Could not identify the wine. Retake the photo with the front label filling the frame.','',100);
-   }
+   const merged=mergeDetectedDetails(vision,ocr);
+   const found=applyVisionDetails(merged);
+   if(!found)setScanState(scanTextIsKo()?'와인을 식별하지 못했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Could not identify the wine. Retake the photo with the front label filling the frame.','',100);
  }catch(e){
    console.error('Wine scan failed',e);setScanState(scanTextIsKo()?'인식에 실패했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Couldn’t identify this wine. Retake the photo with the label filling the frame.','',0);
  }finally{$('cameraBtn').disabled=false;$('galleryBtn').disabled=false;$('cameraInput').value='';$('galleryInput').value=''}
