@@ -231,7 +231,7 @@ function applyVisionDetails(d){
  const vals=[identity,d.vintage,d.grape,d.location].filter(Boolean);
  const pretty=[identity,d.vintage,d.grape,d.location].filter(Boolean).join(' · ');
  const pct=Math.round(confidence*100);
- if(!vals.length||confidence<.45){
+ if(!vals.length||confidence<.35){
    setScanState(scanTextIsKo()?'사진만으로 와인을 확실히 식별하지 못했어요. 라벨을 더 가까이 찍어보세요.':'Could not identify this wine reliably. Try a closer photo of the front label.','',100);
    return false;
  }
@@ -261,7 +261,7 @@ async function identifyWineVision(file){
  const image=await imageDataForVision(file);
  const response=await fetch('/api/identify-wine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image})});
  const data=await response.json().catch(()=>({}));
- if(!response.ok)throw new Error(data.error||('Vision request failed: '+response.status));
+ if(!response.ok){const error=new Error(data.error||('Vision request failed: '+response.status));error.status=response.status;error.code=data.code||'';throw error}
  return data;
 }
 async function fallbackLabelOcr(file){
@@ -279,16 +279,25 @@ async function readWineLabel(file){
  $('cameraBtn').disabled=true;$('galleryBtn').disabled=true;
  setScanState(scanTextIsKo()?'사진에서 와인을 찾고 있어요…':'Identifying the wine from the photo…','',18);
  try{
-   let identified=false;
+   let identified=false,visionFailure=null;
    try{
      const vision=await identifyWineVision(file);
      identified=applyVisionDetails(vision);
    }catch(visionError){
+     visionFailure=visionError;
      console.warn('Vision identification failed; falling back to OCR',visionError);
    }
    if(!identified){
      const fallbackWorked=await fallbackLabelOcr(file);
-     if(!fallbackWorked)setScanState(scanTextIsKo()?'와인을 식별하지 못했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Could not identify the wine. Retake the photo with the front label filling the frame.','',100);
+     if(!fallbackWorked){
+       const serviceUnavailable=visionFailure&&Number(visionFailure.status)>=500;
+       setScanState(
+         serviceUnavailable
+           ? (scanTextIsKo()?'사진 인식 서비스에 잠시 연결할 수 없어요. 잠시 후 다시 시도하거나 직접 입력해 주세요.':'Photo identification is temporarily unavailable. Try again shortly or enter the details manually.')
+           : (scanTextIsKo()?'와인을 식별하지 못했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Could not identify the wine. Retake the photo with the front label filling the frame.'),
+         '',100
+       );
+     }
    }
  }catch(e){
    console.error('Wine scan failed',e);setScanState(scanTextIsKo()?'인식에 실패했어요. 앞 라벨이 크게 보이도록 다시 찍어주세요.':'Couldn’t identify this wine. Retake the photo with the label filling the frame.','',0);
